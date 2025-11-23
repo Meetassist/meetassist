@@ -8,22 +8,18 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL environment variable is required");
 }
 if (!process.env.BETTER_AUTH_URL || !process.env.BETTER_AUTH_SECRET) {
-  throw new Error("BETTER_AUTH_URL and BETTER_AUTH_SECRET environment variables are required");
+  throw new Error(
+    "BETTER_AUTH_URL and BETTER_AUTH_SECRET environment variables are required",
+  );
 }
 
-if (
-  !process.env.GOOGLE_CLIENT_ID ||
-  !process.env.GOOGLE_CLIENT_SECRET ||
-  !process.env.MICROSOFT_CLIENT_ID ||
-  !process.env.MICROSOFT_CLIENT_SECRET
-) {
-  throw new Error("All OAuth client IDs and secrets are required");
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  throw new Error("Google OAuth client ID and secret are required");
 }
-
-
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
-});const prisma = new PrismaClient({ adapter });
+});
+const prisma = new PrismaClient({ adapter });
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
@@ -40,10 +36,6 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    },
-    microsoft: {
-      clientId: process.env.MICROSOFT_CLIENT_ID,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
     },
   },
 

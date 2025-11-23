@@ -43,7 +43,7 @@ export default function CreateMeeting() {
           >
             <Plus />
             Create
-          </Button>{" "}
+          </Button>
         </DialogTrigger>
         <DialogDescription className="sr-only">Create Event</DialogDescription>
 

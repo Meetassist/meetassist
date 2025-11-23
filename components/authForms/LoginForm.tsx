@@ -1,10 +1,5 @@
 "use client";
 import Image from "next/image";
-
-import {
-  SigninWithGoogle,
-  SignInWithMicrosoft,
-} from "@/lib/actions/authentication";
 import { authClient } from "@/lib/auth-client";
 import { Google, Microsoft } from "@/utils/svgs";
 import { useState, useTransition } from "react";
@@ -12,6 +7,10 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { Spinner } from "../ui/spinner";
+import {
+  SignInWithGoogle,
+  SignInWithMicrosoft,
+} from "@/lib/actions/authentication";
 export function LoginForm() {
   const [isPendingGoogle, startTransitionGoogle] = useTransition();
   const [isPendingMicrosoft, startTransitionMicrosoft] = useTransition();
@@ -22,7 +21,7 @@ export function LoginForm() {
   async function handleSignInWithGoogle() {
     startTransitionGoogle(async () => {
       try {
-        const result = await SigninWithGoogle();
+        const result = await SignInWithGoogle();
         if (result.success && result.url) {
           window.location.href = result.url;
           toast.success("Redirecting to Google...");
