@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DAY {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
+}
+
+model User {
+  id              String         @id @default(uuid())
+  name            String
+  email           String
+  emailVerified   Boolean        @default(false)
+  image           String?
+  createdAt       DateTime       @default(now())
+  timezone        String         @default("UTC")
+  updatedAt       DateTime       @updatedAt
+  sessions        Session[]
+  accounts        Account[]
+  availabilities  Availability[]
+  eventType       EventType[]
+  lastLoginMethod String?
+  role            String         @default("USER")
+  // Nylas calendar integration
+  grantId         String?        @unique
+  grantEmail      String?
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([accountId, providerId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
+
+model Availability {
+  id        String   @id @default(uuid())
+  userId    String
+  day       DAY
+  fromTime  String
+  toTime    String 
+   isActive  Boolean  @default(true)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("availability")
+}
+
+model EventType {
+  id                String   @id @default(uuid())
+  userId            String
+  title             String
+  duration          Int
+  maxParticipants   Int      @default(1)  
+  description       String?  @db.Text
+  isActive          Boolean  @default(true)
+  url               String   @unique
+  videoCallSoftware String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([url])
+  @@map("event_type")
+}
