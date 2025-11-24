@@ -37,7 +37,6 @@ export default function Page() {
                 Record a live Meeting
               </h1>
               <p className="text-muted-foreground font-inter text-sm tracking-tighter">
-                {" "}
                 Works with Zoom, Google Meet, or Microsoft Teams
               </p>
               <div className="mt-10">
