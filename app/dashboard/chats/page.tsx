@@ -1,3 +1,8 @@
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Meetassist - chat",
+  description: "Chat with MeetAssist about your conversations",
+};
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,6 +11,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { ArrowUp, SearchIcon } from "lucide-react";
+
 import Image from "next/image";
 export default function Page() {
   return (

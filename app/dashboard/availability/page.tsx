@@ -1,7 +1,11 @@
 import { TimeAvailable } from "@/components/availability/TimeAvailable";
 import { Separator } from "@/components/ui/separator";
 import { Availability } from "@/lib/actions/availabilityAction";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Meetassist - Availability",
+  description: "Set up your work time availability for meetings",
+};
 export default async function Page() {
   const data = await Availability();
   if (!data) {

@@ -3,8 +3,13 @@ import { DisconnectButton } from "@/components/DisconnectButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getNylasConnectionStatus } from "@/lib/actions/nylasAction";
+import { Metadata } from "next";
 import Image from "next/image";
 
+export const metadata: Metadata = {
+  title: "Meetassist - Sync",
+  description: "Sync your calendar, contacts, and meeting platforms",
+};
 const SYNC = [
   {
     id: 1,
