@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { Meetings } from "@/components/meetings/Meetings";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import {
@@ -11,7 +12,6 @@ import {
   CalendarDays,
   Clock2,
   Ellipsis,
-  Link,
   MapPinCheckInside,
   RefreshCw,
 } from "lucide-react";
@@ -63,39 +63,7 @@ export default function Page() {
             Meeting Link
           </h2>
           <div className="mt-4 space-y-5">
-            <Card className="border-b-primary gap-5 rounded-2xl border-b-7 px-4 py-4">
-              <CardTitle className="flex items-center gap-4">
-                <div className="bg-primary size-[23px] rounded-xs" />
-                <p className="font-instrument text-2xl font-medium">
-                  My Meeting Link
-                </p>
-              </CardTitle>
-              <CardContent className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-[#AEAEAE]">
-                    30 min Google meet, one-on-one
-                  </p>
-                  <p className="text-sm text-[#AEAEAE]">Mon, Tue, Fri</p>
-                </div>
-                <div className="flex items-center gap-6">
-                  <Button
-                    variant={"ghost"}
-                    type="button"
-                    className="border-border cursor-pointer rounded-2xl border text-sm"
-                  >
-                    <Link />
-                    copy link
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={"ghost"}
-                    className="border-foreground size-3 cursor-pointer rounded-sm border p-2 py-3"
-                  >
-                    <Ellipsis />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <Meetings />
             <Card className="gap-5 rounded-2xl border-b-7 border-b-[#C479A4] px-4 py-4">
               <CardTitle className="flex items-center gap-4">
                 <div className="size-[23px] rounded-xs bg-[#C479A4]" />

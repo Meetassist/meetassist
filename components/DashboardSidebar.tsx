@@ -16,19 +16,21 @@ type DashboardSidebarProps = React.ComponentProps<typeof Sidebar> & {
   name: string | null;
   email: string | null;
   image: string | null;
+  days: { day: string }[];
 };
 
 export function DashboardSidebar({
   name,
   image,
   email,
+  days,
   ...props
 }: DashboardSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <Logo />
-        <CreateMeeting />
+        <CreateMeeting days={days} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain />

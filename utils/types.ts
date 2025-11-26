@@ -39,6 +39,22 @@ export const ResetPasswordSchema = z
     message: "Passwords do not match!",
     path: ["confirmPassword"],
   });
+
+export const CreateMeetingSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  duration: z
+    .number()
+    .min(15, "Duration must be at least 15 minutes")
+    .max(480, "Duration cannot exceed 8 hours"),
+  maxParticipants: z
+    .number()
+    .min(1, "At least 1 participant required")
+    .max(1000, "Maximum 1000 participants allowed"),
+  url: z.string(),
+  videoCallSoftware: z.string().min(1, "Please select a video platform"),
+});
+
+export type TCreateMeetingSchema = z.infer<typeof CreateMeetingSchema>;
 export type TSignUpSchema = z.infer<typeof SignupSchema>;
 export type TForgetPasswordSchema = z.infer<typeof ForgetPasswordSchema>;
 export type TResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;

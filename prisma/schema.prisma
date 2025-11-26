@@ -106,7 +106,6 @@ model EventType {
   title             String
   duration          Int
   maxParticipants   Int      @default(1)  
-  description       String?  @db.Text
   isActive          Boolean  @default(true)
   url               String   @unique
   videoCallSoftware String
