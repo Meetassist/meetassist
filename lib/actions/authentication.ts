@@ -6,12 +6,13 @@ import { auth } from "../auth";
 export async function SignInWithGoogle() {
   try {
     const result = await auth.api.signInSocial({
-      headers: await headers(),
       body: {
         provider: "google",
         callbackURL: "/dashboard",
       },
+      headers: await headers(),
     });
+
     return {
       url: result.url,
       success: true,
