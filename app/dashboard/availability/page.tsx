@@ -1,6 +1,17 @@
+import { TimeAvailable } from "@/components/availability/TimeAvailable";
 import { Separator } from "@/components/ui/separator";
+import { Availability } from "@/lib/actions/availabilityAction";
 
-export default function Page() {
+export default async function Page() {
+  const data = await Availability();
+  if (!data) {
+    return (
+      <section className="px-6 py-5">
+        <p>Failed to load availability data. Please try again.</p>
+      </section>
+    );
+  }
+
   return (
     <section className="px-6 py-5">
       <div>
@@ -16,6 +27,7 @@ export default function Page() {
           Set when you are typically available for meetings
         </p>
       </div>
+      <TimeAvailable data={data} />
     </section>
   );
 }

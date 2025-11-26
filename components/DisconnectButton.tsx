@@ -33,9 +33,16 @@ export function DisconnectButton() {
       onClick={handleDisconnect}
       disabled={isLoading}
       variant="ghost"
-      className="font-instrument text-foreground rounded-sm border py-5"
+      className="font-instrument text-foreground cursor-pointer rounded-sm border py-5"
     >
-      {isLoading ? <Spinner /> : "Disconnect"}
+      {isLoading ? (
+        <>
+          <Spinner />
+          Disconnecting...
+        </>
+      ) : (
+        "Disconnect"
+      )}
     </Button>
   );
 }
