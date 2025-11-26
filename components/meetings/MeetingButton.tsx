@@ -55,7 +55,7 @@ export function MeetingButton({ id }: { id: string }) {
           aria-label="Meeting options"
         >
           <Ellipsis />
-        </Button>{" "}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40" align="end">
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -78,7 +78,7 @@ export function MeetingButton({ id }: { id: string }) {
                 meeting and remove your data from our servers. People you have
                 shared the link with will no longer have access to it.
               </AlertDialogDescription>
-            </AlertDialogHeader>{" "}
+            </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={isDeleting}>
                 Cancel
