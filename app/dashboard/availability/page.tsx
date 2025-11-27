@@ -1,21 +1,39 @@
 import { TimeAvailable } from "@/components/availability/TimeAvailable";
+import { AvailabilityLoadingSkeleton } from "@/components/SkeletonLoading";
 import { Separator } from "@/components/ui/separator";
 import { Availability } from "@/lib/actions/availabilityAction";
 import { Metadata } from "next";
+import { Suspense } from "react";
 export const metadata: Metadata = {
   title: "Meetassist - Availability",
   description: "Set up your work time availability for meetings",
 };
-export default async function Page() {
-  const data = await Availability();
-  if (!data) {
+
+async function AvailabilityContent() {
+  try {
+    const data = await Availability();
+    if (data === null || data === undefined) {
+      return (
+        <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-red-600">
+            Failed to load availability data. Please try again.
+          </p>
+        </div>
+      );
+    }
+    return <TimeAvailable data={data} />;
+  } catch (error) {
+    console.log(error);
     return (
-      <section className="px-6 py-5">
-        <p>Failed to load availability data. Please try again.</p>
-      </section>
+      <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-4">
+        <p className="text-red-600">
+          Failed to load availability data. Please try again.
+        </p>
+      </div>
     );
   }
-
+}
+export default function Page() {
   return (
     <section className="px-6 py-5">
       <div>
@@ -31,7 +49,9 @@ export default async function Page() {
           Set when you are typically available for meetings
         </p>
       </div>
-      <TimeAvailable data={data} />
+      <Suspense fallback={<AvailabilityLoadingSkeleton />}>
+        <AvailabilityContent />
+      </Suspense>
     </section>
   );
 }

@@ -2,8 +2,10 @@ import { MeetingsData } from "@/lib/actions/meetingAction";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { CopyMeetingLink } from "./CopyMeetingLink";
 import { MeetingButton } from "./MeetingButton";
+import { Suspense } from "react";
+import { MeetingLoadingStates } from "../SkeletonLoading";
 
-export async function Meetings() {
+async function DataForMeeting() {
   const data = await MeetingsData();
 
   const baseUrl = process.env.NEXT_PUBLIC_URL;
@@ -18,7 +20,6 @@ export async function Meetings() {
   if (data.length === 0) {
     return <div>No meetings found.</div>;
   }
-
   return (
     <>
       {data.map((meeting) => {
@@ -51,14 +52,26 @@ export async function Meetings() {
               </div>
               <div className="flex items-center gap-6">
                 <CopyMeetingLink
-                  meetLinkUrl={`${baseUrl}/${encodeURIComponent(meeting.user.email)}/${encodeURIComponent(meeting.url)}`}
+                  meetLinkUrl={`${baseUrl}/${decodeURIComponent(meeting.user.email)}/${decodeURIComponent(meeting.url)}`}
                 />
-                <MeetingButton id={meeting.id} />
+                <MeetingButton
+                  id={meeting.id}
+                  url={meeting.url}
+                  email={meeting.user.email}
+                />
               </div>
             </CardContent>
           </Card>
         );
       })}
     </>
+  );
+}
+
+export function Meetings() {
+  return (
+    <Suspense fallback={<MeetingLoadingStates />}>
+      <DataForMeeting />
+    </Suspense>
   );
 }
