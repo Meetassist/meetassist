@@ -28,11 +28,11 @@ export function TimeFieldInput({
       aria-label={label}
       isDisabled={isDisabled}
     >
-      <DateInput className="border-border flex gap-1 rounded border p-2">
+      <DateInput className="border-border flex gap-1 rounded border p-1.5 sm:p-2">
         {(segment) => (
           <DateSegment
             segment={segment}
-            className="focus:bg-primary rounded px-px tabular-nums focus:text-white focus:outline-none"
+            className="focus:bg-primary rounded text-sm tabular-nums focus:text-white focus:outline-none sm:text-base md:px-px"
           />
         )}
       </DateInput>

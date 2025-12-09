@@ -35,12 +35,12 @@ async function AvailabilityContent() {
 }
 export default function Page() {
   return (
-    <section className="px-6 py-5">
+    <section className="overflow-x-hidden px-6 py-5">
       <div>
         <h1 className="font-instrument text-3xl font-medium">Availability</h1>
-        <p className="font-instrument text-muted-foreground mt-2 text-base font-medium">
+        <p className="font-instrument text-muted-foreground mt-2 text-xs font-medium sm:text-base">
           Set up your work time availability
-        </p>{" "}
+        </p>
         <Separator className="mt-4" />
       </div>
       <div className="mt-3">

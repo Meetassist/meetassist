@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import CreateMeeting from "./CreateMeeting";
+import CreateMeeting from "./meetings/CreateMeeting";
 
 type DashboardSidebarProps = React.ComponentProps<typeof Sidebar> & {
   name: string | null;

@@ -1,8 +1,3 @@
-import { Metadata } from "next";
-export const metadata: Metadata = {
-  title: "Meetassist - chat",
-  description: "Chat with MeetAssist about your conversations",
-};
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,12 +6,17 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { ArrowUp, SearchIcon } from "lucide-react";
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Meetassist - chat",
+  description: "Chat with MeetAssist about your conversations",
+};
 
 import Image from "next/image";
 export default function Page() {
   return (
-    <section className="px-6 py-5">
-      <div>
+    <section className="px-6 pb-4">
+      <header className="hidden py-5 md:block">
         <InputGroup className="max-w-[500px] rounded-lg py-5">
           <InputGroupInput
             className="placeholder:text-base"
@@ -29,8 +29,8 @@ export default function Page() {
             K
           </InputGroupAddon>
         </InputGroup>
-      </div>
-      <div className="border-border mt-10 flex items-center border-b pb-3">
+      </header>
+      <div className="border-border mt-3 flex items-center border-b pb-3 md:mt-6">
         <div>
           <h1 className="font-instrument text-2xl font-medium">MeetAssist</h1>
           <p className="font-instrument text-muted-foreground text-sm">
@@ -40,7 +40,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-8 flex items-start justify-between gap-8">
-        <div className="font-instrument border-border flex-1 border-r pr-3">
+        <div className="font-instrument md:border-border w-full flex-1 pr-3 md:border-r">
           <h2 className="text-2xl font-medium">Meeting With Lucas</h2>
           <div className="mt-4 flex items-center gap-3">
             <Avatar>
@@ -71,7 +71,7 @@ export default function Page() {
               </p>
             </div>
             <div className="px-10">
-              <p className="font-instrument text-muted-foreground mt-4 max-w-[700px] text-base font-medium">
+              <p className="font-instrument text-muted-foreground mt-4 max-w-full text-justify text-base font-medium md:max-w-[700px]">
                 The meeting was productive and collaborative. You both clearly
                 outlined objectives, shared perspectives on realistic timelines,
                 and clarified responsibilities. There was good communication
@@ -117,7 +117,7 @@ export default function Page() {
             </InputGroup>
           </div>
         </div>
-        <div className="w-[300px] shrink-0">
+        <div className="hidden w-[300px] shrink-0 md:block">
           <Button
             variant={"ghost"}
             className="text-primary mb-3 cursor-pointer text-sm font-medium"

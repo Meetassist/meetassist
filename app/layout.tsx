@@ -1,7 +1,7 @@
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Instrument_Sans, Inter } from "next/font/google";
 import "./globals.css";
-
 const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
   weight: ["400", "500", "600", "700"],
@@ -32,6 +32,7 @@ export default function RootLayout({
         className={` ${instrumentSans.variable} ${inter.variable} font-instrument font-medium antialiased`}
       >
         {children}
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );

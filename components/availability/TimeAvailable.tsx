@@ -87,11 +87,11 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
     return parseTimeString(dataItem?.[field] || "09:00");
   }
 
-  const handleTimeChange = (
+  function handleTimeChange(
     id: string,
     field: "fromTime" | "toTime",
     value: Time,
-  ) => {
+  ) {
     setLocalTimes((prev) => ({
       ...prev,
       [id]: {
@@ -106,7 +106,7 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
       ...existing,
       [field]: timeString,
     });
-  };
+  }
 
   function handleBlur(id: string) {
     const changes = pendingChanges.current.get(id);
@@ -160,11 +160,11 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
     });
   }
 
-  const handleCopyDayToggle = (
+  function handleCopyDayToggle(
     sourceId: string,
     dayId: string,
     checked: boolean,
-  ) => {
+  ) {
     setSelectedDays((prev) => {
       const current = prev[sourceId] || [];
       if (checked) {
@@ -179,9 +179,9 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
         };
       }
     });
-  };
+  }
 
-  const handleApplyCopy = (sourceDay: AvailabilityDay) => {
+  function handleApplyCopy(sourceDay: AvailabilityDay) {
     const targetIds = selectedDays[sourceDay.id] || [];
 
     if (targetIds.length === 0) {
@@ -215,9 +215,9 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
         toast.error(result.error || "Failed to save your settings");
       }
     });
-  };
+  }
 
-  const handlePopoverOpenChange = (dayId: string, open: boolean) => {
+  function handlePopoverOpenChange(dayId: string, open: boolean) {
     setOpenPopoverId(open ? dayId : null);
     if (!open) {
       setSelectedDays((prev) => ({
@@ -225,7 +225,33 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
         [dayId]: [],
       }));
     }
-  };
+  }
+
+  function handleSelectAll(sourceTimeId: string, checked: boolean) {
+    if (checked) {
+      const allDayIds = optimisticData
+        .filter((day) => day.id !== sourceTimeId)
+        .map((day) => day.id);
+
+      setSelectedDays((prev) => ({
+        ...prev,
+        [sourceTimeId]: allDayIds,
+      }));
+    } else {
+      setSelectedDays((prev) => ({
+        ...prev,
+        [sourceTimeId]: [],
+      }));
+    }
+  }
+
+  function isAllSelected(sourceTimeId: string): boolean {
+    const selectedCount = selectedDays[sourceTimeId]?.length || 0;
+    const totalAvailable = optimisticData.filter(
+      (d) => d.id !== sourceTimeId,
+    ).length;
+    return selectedCount === totalAvailable && totalAvailable > 0;
+  }
 
   return (
     <div className="mt-4 space-y-4">
@@ -253,6 +279,8 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
             handlePopoverOpenChange(day.id, open)
           }
           isDisabled={isPending}
+          isCopyAllSelected={isAllSelected(day.id)}
+          onCopySelectAll={(checked) => handleSelectAll(day.id, checked)}
         />
       ))}
     </div>

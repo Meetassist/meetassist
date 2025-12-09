@@ -48,7 +48,7 @@ export default async function Page() {
   }
 
   return (
-    <section className="mt-10 px-10">
+    <section className="mt-10 px-6">
       <div>
         <h1 className="font-instrument text-foreground text-[32px] font-medium">
           Sync

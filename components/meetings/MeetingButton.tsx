@@ -18,20 +18,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DeleteMeeting } from "@/lib/actions/meetingAction";
-import { Ellipsis, ExternalLink } from "lucide-react";
+import { Ellipsis, ExternalLink, Trash } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Spinner } from "../ui/spinner";
+import UpdateMeeting from "./UpdateMeeting";
 
 export function MeetingButton({
   id,
   url,
   email,
+  days,
 }: {
   id: string;
   url: string;
   email: string;
+  days: { day: string }[];
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -77,14 +80,16 @@ export function MeetingButton({
             <ExternalLink className="size-4" />
             Preview
           </Link>
-        </DropdownMenuItem>{" "}
+        </DropdownMenuItem>
+        <UpdateMeeting days={days} id={id} />
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
           <AlertDialogTrigger asChild>
             <DropdownMenuItem
-              className="w-full cursor-pointer"
+              className="flex w-full cursor-pointer items-center gap-2"
               onSelect={(e) => e.preventDefault()}
               variant="destructive"
             >
+              <Trash />
               Delete
             </DropdownMenuItem>
           </AlertDialogTrigger>
