@@ -20,6 +20,9 @@ interface CopyTimesPopoverProps {
   onApply: () => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  isDisabled: boolean;
+  onSelectAll: (checked: boolean) => void;
+  isAllSelected: boolean;
 }
 
 export function CopyTimesPopover({
@@ -30,12 +33,16 @@ export function CopyTimesPopover({
   onApply,
   isOpen,
   onOpenChange,
+  isDisabled,
+  isAllSelected,
+  onSelectAll,
 }: CopyTimesPopoverProps) {
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
+          disabled={isDisabled}
           size="icon"
           className="cursor-pointer"
           aria-label={`Copy ${sourceDay.day} times to other days`}
@@ -51,17 +58,18 @@ export function CopyTimesPopover({
           <div className="space-y-4">
             {allDays.map((day) => {
               const isCurrentDay = day.id === sourceDay.id;
-              const isSelected = selectedDays.includes(day.id);
+              const isSelected = selectedDays.includes(day.id) || false;
 
               return (
                 <div key={day.id} className="flex items-center justify-between">
                   <Label
                     htmlFor={`copy-${sourceDay.id}-${day.id}`}
-                    className="cursor-pointer text-sm leading-none font-normal"
+                    className="w-full cursor-pointer text-sm leading-none font-normal"
                   >
                     {day.day}
                   </Label>
                   <Checkbox
+                    className="cursor-pointer"
                     id={`copy-${sourceDay.id}-${day.id}`}
                     checked={isCurrentDay || isSelected}
                     disabled={isCurrentDay}
@@ -73,9 +81,25 @@ export function CopyTimesPopover({
                 </div>
               );
             })}
+            <div className="flex w-full items-center justify-between border-t py-1">
+              <Label
+                htmlFor={`select-all-${sourceDay.id}`}
+                className="w-full cursor-pointer text-sm font-medium"
+              >
+                Select All
+              </Label>
+              <Checkbox
+                className="cursor-pointer"
+                id={`select-all-${sourceDay.id}`}
+                checked={isAllSelected}
+                onCheckedChange={(checked) => {
+                  onSelectAll(checked === true);
+                }}
+              />
+            </div>
           </div>
         </div>
-        <div className="pt-5 pb-2">
+        <div className="pt-4 pb-2">
           <Button
             onClick={onApply}
             disabled={selectedDays.length === 0}

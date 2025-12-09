@@ -29,6 +29,8 @@ interface DayTimeSlotProps {
   isCopyPopoverOpen: boolean;
   onCopyPopoverOpenChange: (open: boolean) => void;
   isDisabled?: boolean;
+  onCopySelectAll: (checked: boolean) => void;
+  isCopyAllSelected: boolean;
 }
 
 export function DayTimeSlot({
@@ -47,15 +49,17 @@ export function DayTimeSlot({
   isCopyPopoverOpen,
   onCopyPopoverOpenChange,
   isDisabled = false,
+  isCopyAllSelected,
+  onCopySelectAll,
 }: DayTimeSlotProps) {
   return (
     <div className="flex items-center gap-3">
-      <div className="bg-primary relative flex size-10 shrink-0 items-center justify-center rounded-full text-white">
+      <div className="bg-primary relative flex size-7 shrink-0 items-center justify-center rounded-full text-white sm:size-10">
         <span>{day.day[0] || "?"}</span>
       </div>
       {day.isActive ? (
         <>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 md:gap-3">
             <TimeFieldInput
               value={fromTimeValue}
               onChange={onFromTimeChange}
@@ -91,6 +95,9 @@ export function DayTimeSlot({
               onApply={onCopyApply}
               isOpen={isCopyPopoverOpen}
               onOpenChange={onCopyPopoverOpenChange}
+              isDisabled={isDisabled}
+              onSelectAll={onCopySelectAll}
+              isAllSelected={isCopyAllSelected}
             />
           </div>
         </>

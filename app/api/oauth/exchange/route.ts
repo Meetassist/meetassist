@@ -53,12 +53,12 @@ export async function GET(req: NextRequest) {
     }
 
     const { email, grantId } = response;
-
     await db.user.update({
       where: { id: session?.user?.id },
       data: {
         grantId,
         grantEmail: email,
+        confGrantId: grantId,
       },
     });
 

@@ -20,8 +20,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Card, CardContent } from "./ui/card";
-import { Label } from "./ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -29,8 +29,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Spinner } from "./ui/spinner";
+} from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 
 type VideoCallProvider =
   | "Google Meet"
@@ -107,10 +107,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
         }}
       >
         <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            className="font-instrument border-primary text-primary w-full cursor-pointer rounded-full border-2 py-5 text-base font-medium"
-          >
+          <Button className="font-instrument mt-4 w-full cursor-pointer rounded-full py-7 text-base font-medium text-white">
             <Plus />
             Create
           </Button>
@@ -119,7 +116,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
         {/* Show meeting details form after selecting type */}
         {participants === 1 || participants === 2 ? (
           <DialogContent
-            className="min-h-[550px] rounded-sm sm:max-w-[650px]"
+            className="max-h-[90vh] min-h-[550px] overflow-y-auto rounded-sm px-4 sm:max-w-[650px] sm:px-6"
             showCloseButton={false}
           >
             <DialogDescription className="sr-only">
@@ -129,16 +126,16 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
               onSubmit={handleSubmit(handleCreateMeeting)}
               className="contents"
             >
-              <DialogHeader className="-mt-8 flex flex-row items-center justify-between gap-8 text-2xl font-semibold">
+              <DialogHeader className="-mt-8 flex flex-row items-center justify-between gap-4 text-xl font-semibold sm:gap-8 sm:text-2xl">
                 <div className="flex-1">
                   <input
-                    className="shadow-0 w-full border-0 py-6 outline-0"
+                    className="shadow-0 w-full border-0 py-4 text-base outline-0 sm:py-6 sm:text-xl"
                     {...register("title")}
                     placeholder="Name Your Meeting"
                     onChange={handleTitleChange}
                   />
                   {errors.title && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-xs text-red-500 sm:text-sm">
                       {errors.title.message}
                     </p>
                   )}
@@ -147,7 +144,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                 <DialogClose asChild>
                   <button
                     type="button"
-                    className="border-border cursor-pointer rounded-full border p-3 transition-colors hover:bg-gray-100"
+                    className="border-border cursor-pointer rounded-full border p-2 transition-colors hover:bg-gray-100 sm:p-3"
                   >
                     <X size={16} />
                     <span className="sr-only">Close</span>
@@ -160,7 +157,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                 <div className="space-y-3">
                   <Label
                     htmlFor="duration"
-                    className="font-instrument text-xl font-medium"
+                    className="font-instrument text-lg font-medium sm:text-xl"
                   >
                     Duration
                   </Label>
@@ -173,7 +170,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                         onValueChange={(value) => field.onChange(Number(value))}
                       >
                         <SelectTrigger
-                          className="w-full cursor-pointer py-6"
+                          className="w-full cursor-pointer py-5 sm:py-6"
                           id="duration"
                         >
                           <SelectValue />
@@ -190,7 +187,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                     )}
                   />
                   {errors.duration && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-xs text-red-500 sm:text-sm">
                       {errors.duration.message}
                     </p>
                   )}
@@ -198,11 +195,11 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
 
                 {/* Video Platform Selection */}
                 <div className="space-y-3">
-                  <Label className="font-instrument text-xl font-medium">
+                  <Label className="font-instrument text-lg font-medium sm:text-xl">
                     Location
                   </Label>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:gap-1.5">
                     <Button
                       type="button"
                       variant={
@@ -212,7 +209,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                       }
                       onClick={() => handlePlatformSelect("Google Meet")}
                       className={cn(
-                        "border-border flex-1 cursor-pointer border p-6 text-center",
+                        "border-border flex-1 cursor-pointer border p-4 text-center text-xs sm:p-6 sm:text-sm",
                         videoCallPlatform === "Google Meet" && "text-white",
                       )}
                     >
@@ -222,8 +219,10 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                         priority
                         width={20}
                         height={20}
+                        className="shrink-0"
                       />
-                      Google Meet
+                      <span className="hidden sm:inline">Google Meet</span>
+                      <span className="sm:hidden">Meet</span>
                     </Button>
                     <Button
                       type="button"
@@ -234,7 +233,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                           : "ghost"
                       }
                       className={cn(
-                        "border-border flex-1 cursor-pointer border p-6 text-center",
+                        "border-border flex-1 cursor-pointer border p-4 text-center text-xs sm:p-6 sm:text-sm",
                         videoCallPlatform === "Zoom Meeting" && "text-white",
                       )}
                     >
@@ -250,19 +249,20 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                           : "ghost"
                       }
                       className={cn(
-                        "border-border flex-1 cursor-pointer border p-6 text-center",
+                        "border-border flex-1 cursor-pointer border p-4 text-center text-xs sm:p-6 sm:text-sm",
                         videoCallPlatform === "Microsoft Teams" && "text-white",
                       )}
                     >
                       <MicrosoftTeams />
-                      Microsoft Teams
+                      <span className="hidden sm:inline">Microsoft Teams</span>
+                      <span className="sm:hidden">Teams</span>
                     </Button>
 
                     <Button
                       type="button"
                       variant="ghost"
                       disabled={true}
-                      className="border-border flex-1 cursor-not-allowed border p-6 text-center"
+                      className="border-border flex-1 cursor-not-allowed border p-4 text-center text-xs sm:p-6 sm:text-sm"
                     >
                       <Image
                         src="/call.svg"
@@ -270,12 +270,13 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                         priority
                         width={20}
                         height={20}
+                        className="shrink-0"
                       />
                       Phone
                     </Button>
                   </div>
                   {errors.videoCallSoftware && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-xs text-red-500 sm:text-sm">
                       {errors.videoCallSoftware.message}
                     </p>
                   )}
@@ -284,7 +285,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                 {/* Availability Display */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between">
-                    <Label className="font-instrument text-xl font-medium">
+                    <Label className="font-instrument text-lg font-medium sm:text-xl">
                       Availability
                     </Label>
                     <Button
@@ -296,16 +297,16 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                     </Button>
                   </div>
 
-                  <span className="text-muted-foreground text-sm font-medium">
+                  <span className="text-muted-foreground text-xs font-medium sm:text-sm">
                     {splitdays} (Hours vary)
                   </span>
                 </div>
               </div>
 
               {/* Submit Button */}
-              <div className="mt-8">
+              <div className="mt-6 w-full sm:mt-8">
                 <Button
-                  className="w-full cursor-pointer py-5 text-white"
+                  className="w-full cursor-pointer py-5 text-sm text-white sm:text-base"
                   type="submit"
                   disabled={isSubmitting}
                 >
@@ -323,11 +324,11 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
         ) : (
           /* Initial participant type selection */
           <DialogContent
-            className="min-h-[500px] rounded-sm sm:max-w-[650px]"
+            className="max-h-[90vh] min-h-[500px] overflow-y-auto rounded-sm px-4 sm:max-w-[650px] sm:px-6"
             showCloseButton={false}
           >
             <DialogHeader className="flex flex-row items-center justify-between space-y-0">
-              <DialogTitle className="font-instrument text-2xl">
+              <DialogTitle className="font-instrument text-xl sm:text-2xl">
                 Create Event
               </DialogTitle>
               <DialogDescription className="sr-only">
@@ -336,7 +337,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
               <DialogClose asChild>
                 <button
                   type="button"
-                  className="border-border cursor-pointer rounded-full border p-3 transition-colors hover:bg-gray-100"
+                  className="border-border cursor-pointer rounded-full border p-2 transition-colors hover:bg-gray-100 sm:p-3"
                 >
                   <X size={16} />
                   <span className="sr-only">Close</span>
@@ -360,47 +361,54 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                   setValue("maxParticipants", 1);
                 }}
               >
-                <CardContent className="flex items-center justify-between px-3">
+                <CardContent className="flex items-center justify-between px-3 py-4">
                   <div>
-                    <h2 className="font-instrument text-2xl font-medium">
+                    <h2 className="font-instrument text-xl font-medium sm:text-2xl">
                       One-on-one
                     </h2>
                     <div className="mt-2 space-y-0.5">
-                      <p className="text-muted-foreground flex items-center gap-2 text-sm">
+                      <p className="text-muted-foreground flex items-center gap-2 text-xs sm:text-sm">
                         1 host → 1 Invitee
                       </p>
-                      <p className="text-muted-foreground text-sm">
+                      <p className="text-muted-foreground text-xs sm:text-sm">
                         Ideal for a 1:1 Interview, chats, etc
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="size-7 shrink-0" />
+                  <ArrowRight className="size-5 shrink-0 sm:size-7" />
                 </CardContent>
               </Card>
-
               {/* Group Option */}
               <Card
                 className="cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setParticipants(2);
+                    setValue("maxParticipants", 10);
+                  }
+                }}
                 onClick={() => {
                   setParticipants(2);
                   setValue("maxParticipants", 10);
                 }}
               >
-                <CardContent className="flex items-center justify-between px-3">
+                <CardContent className="flex items-center justify-between px-3 py-4">
                   <div>
-                    <h2 className="font-instrument text-2xl font-medium">
+                    <h2 className="font-instrument text-xl font-medium sm:text-2xl">
                       Group
                     </h2>
                     <div className="mt-2 space-y-0.5">
-                      <p className="text-muted-foreground flex items-center gap-2 text-sm">
+                      <p className="text-muted-foreground flex items-center gap-2 text-xs sm:text-sm">
                         1 host → Multiple Invitees{" "}
                       </p>
-                      <p className="text-muted-foreground text-sm">
+                      <p className="text-muted-foreground text-xs sm:text-sm">
                         Online class, Group chats, etc
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="size-7 shrink-0" />
+                  <ArrowRight className="size-5 shrink-0 sm:size-7" />
                 </CardContent>
               </Card>
             </div>

@@ -35,7 +35,7 @@ model User {
   // Nylas calendar integration
   grantId         String?        @unique
   grantEmail      String?
-
+  confGrantId     String?  
   @@unique([email])
   @@map("user")
 }

@@ -54,6 +54,18 @@ export const CreateMeetingSchema = z.object({
   videoCallSoftware: z.string().min(1, "Please select a video platform"),
 });
 
+export const BookingFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
+  guestEmail: z.email("Email address is requird"),
+  guestEmails: z.array(z.email()).optional(),
+  userEmail: z.string(),
+  eventTypeId: z.string(),
+  fromTime: z.string(),
+  eventDate: z.string(),
+});
+
+export type TBookingFormSchema = z.infer<typeof BookingFormSchema>;
 export type TCreateMeetingSchema = z.infer<typeof CreateMeetingSchema>;
 export type TSignUpSchema = z.infer<typeof SignupSchema>;
 export type TForgetPasswordSchema = z.infer<typeof ForgetPasswordSchema>;

@@ -58,7 +58,7 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-dvh w-full flex-3 flex-col items-center justify-center px-10 pb-40">
+    <div className="flex min-h-dvh w-full flex-2 flex-col items-center justify-center px-6 pb-40 sm:px-8 md:px-10">
       <div className="flex items-center -space-x-4 text-2xl">
         <Image src={"/meetassit.png"} alt="Logo" width={70} height={70} />
         <span className="font-inter text-primary font-medium"> Meetassist</span>
@@ -103,9 +103,10 @@ export function LoginForm() {
             <Button
               onClick={handleSignInWithMicrosoft}
               variant={"outline"}
-              disabled={isPendingMicrosoft || isPendingGoogle}
+              // disabled={isPendingMicrosoft || isPendingGoogle}
+              disabled
               type="button"
-              className="font-instrument relative w-full cursor-pointer py-5 text-sm font-medium"
+              className="font-instrument relative w-full cursor-pointer py-5 text-sm font-medium disabled:cursor-not-allowed"
             >
               {lastMethod === "microsoft" && (
                 <Badge className="font-instrument absolute -top-1 -right-1 font-medium text-white">

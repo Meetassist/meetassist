@@ -28,6 +28,7 @@ export async function disconnectNylas() {
         data: {
           grantId: null,
           grantEmail: null,
+          confGrantId: null,
         },
       });
     } catch (error) {

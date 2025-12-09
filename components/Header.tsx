@@ -6,7 +6,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
 export default function Header() {
   return (
-    <header className="flex items-center gap-[254px] p-5 px-10">
+    <header className="hidden items-center gap-[254px] p-5 px-10 md:flex">
       <Suspense fallback={<UserLoadingState />}>
         <HeaderUserInfo />
       </Suspense>

@@ -1,12 +1,33 @@
 import { MeetingsData } from "@/lib/actions/meetingAction";
-import { Card, CardContent, CardTitle } from "../ui/card";
+import { getUserSession } from "@/lib/getSession";
+import db from "@/lib/prisma";
+import { Suspense } from "react";
+import { MeetingsLoadingSkeleton } from "../SkeletonLoading";
+import { Card, CardContent } from "../ui/card";
 import { CopyMeetingLink } from "./CopyMeetingLink";
 import { MeetingButton } from "./MeetingButton";
-import { Suspense } from "react";
-import { MeetingLoadingStates } from "../SkeletonLoading";
 
 async function DataForMeeting() {
   const data = await MeetingsData();
+  const session = await getUserSession();
+  if (!session?.user?.id) {
+    return <div>Please sign in to view your meetings.</div>;
+  }
+  const days = await db.availability.findMany({
+    where: { userId: session.user.id, isActive: true },
+    select: {
+      day: true,
+    },
+  });
+  const dayOrder = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
 
   const baseUrl = process.env.NEXT_PUBLIC_URL;
   if (!baseUrl) {
@@ -20,44 +41,55 @@ async function DataForMeeting() {
   if (data.length === 0) {
     return <div>No meetings found.</div>;
   }
+
+  const sortedDays = days.sort((a, b) => {
+    const aIndex = dayOrder.indexOf(a.day);
+    const bIndex = dayOrder.indexOf(b.day);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+
   return (
     <>
       {data.map((meeting) => {
-        const displayDays =
-          meeting.user.availabilities
-            ?.slice(0, 3)
-            .map((availability) => availability.day?.slice(0, 3) || "N/A")
-            .join(", ") || "No availability";
-
+        const splitdays = meeting.user.availabilities
+          .map((item) => item.day.slice(0, 3))
+          .join(", ");
         return (
           <Card
             key={meeting.id}
-            className="border-b-primary gap-5 rounded-2xl border-b-7 px-4 py-4"
+            className="md:border-b-primary border-l-primary gap-5 rounded-2xl border-l-7 px-4 py-4 md:border-b-7 md:border-l-0"
           >
-            <CardTitle className="flex items-center gap-4">
-              <span className="bg-primary size-5 rounded-xs" />
-              <span className="font-instrument text-2xl font-medium capitalize">
-                {meeting.title}
-              </span>
-            </CardTitle>
-            <CardContent className="flex items-center justify-between">
+            <CardContent className="flex items-start justify-between md:items-center">
               <div>
-                <p className="text-sm text-[#AEAEAE]">
-                  {meeting.duration} mins {meeting.videoCallSoftware},{" "}
-                  {meeting.maxParticipants > 1
-                    ? "multiple participants"
-                    : "one-on-one"}
-                </p>
-                <p className="text-sm text-[#AEAEAE]">{displayDays}</p>
+                <div className="flex items-center gap-4">
+                  <span className="bg-primary size-5 rounded-xs" />
+                  <h3 className="font-instrument text-base font-medium capitalize sm:text-2xl">
+                    {meeting.title}
+                  </h3>
+                </div>
+                <div className="pt-4">
+                  <p className="text-xs text-[#AEAEAE] sm:text-sm">
+                    {meeting.duration} mins {meeting.videoCallSoftware},{" "}
+                    {meeting.maxParticipants > 1
+                      ? "multiple participants"
+                      : "one-on-one"}
+                  </p>
+                  <p className="text-xs text-[#AEAEAE] sm:text-sm">
+                    {splitdays}
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col-reverse items-end justify-end gap-10 md:flex-row md:items-center md:gap-4">
                 <CopyMeetingLink
-                  meetLinkUrl={`${baseUrl}/${decodeURIComponent(meeting.user.email)}/${decodeURIComponent(meeting.url)}`}
+                  meetLinkUrl={`${baseUrl}/${encodeURIComponent(meeting.user.email)}/${encodeURIComponent(meeting.url)}`}
                 />
                 <MeetingButton
                   id={meeting.id}
                   url={meeting.url}
                   email={meeting.user.email}
+                  days={sortedDays}
                 />
               </div>
             </CardContent>
@@ -70,8 +102,15 @@ async function DataForMeeting() {
 
 export function Meetings() {
   return (
-    <Suspense fallback={<MeetingLoadingStates />}>
-      <DataForMeeting />
-    </Suspense>
+    <section>
+      <h2 className="text-foreground font-instrument text-2xl font-medium">
+        Meeting Link
+      </h2>
+      <Suspense fallback={<MeetingsLoadingSkeleton />}>
+        <div className="mt-4 space-y-5">
+          <DataForMeeting />
+        </div>
+      </Suspense>
+    </section>
   );
 }
