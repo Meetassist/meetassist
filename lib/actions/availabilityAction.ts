@@ -2,7 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { getUserSession } from "../getSession";
 import db from "../prisma";
-
+import { DAY_ORDER } from "@/utils/helper";
 export async function Availability(): Promise<
   Array<{
     id: string;
@@ -28,21 +28,12 @@ export async function Availability(): Promise<
       isActive: true,
     },
   });
-  const dayOrder = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+
+  const DAY_INDEX_MAP = new Map(DAY_ORDER.map((day, index) => [day, index]));
 
   return data.sort((a, b) => {
-    const aIndex = dayOrder.indexOf(a.day);
-    const bIndex = dayOrder.indexOf(b.day);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
+    const aIndex = DAY_INDEX_MAP.get(a.day) ?? Infinity;
+    const bIndex = DAY_INDEX_MAP.get(b.day) ?? Infinity;
     return aIndex - bIndex;
   });
 }
@@ -61,11 +52,10 @@ export async function updateTimeSlot(data: {
     await db.availability.update({
       where: { id: data.id, userId: session.user.id },
       data: {
-        ...(data.fromTime && { fromTime: data.fromTime }),
-        ...(data.toTime && { toTime: data.toTime }),
+        ...(data.fromTime !== undefined && { fromTime: data.fromTime }),
+        ...(data.toTime !== undefined && { toTime: data.toTime }),
       },
     });
-
     revalidatePath("/dashboard/availability");
     return { success: true };
   } catch (error) {
@@ -109,16 +99,14 @@ export async function copyTimesToDays(data: {
     return { success: false, error: "Not authenticated" };
   }
 
-  // Verify user owns the source record
-  const source = await db.availability.findUnique({
+  const sourceRecord = await db.availability.findUnique({
     where: { id: data.sourceId, userId: session.user.id },
   });
-  if (!source) {
+  if (!sourceRecord) {
     return { success: false, error: "Source record not found" };
   }
 
   try {
-    // Use updateMany instead of transaction for better performance
     await db.availability.updateMany({
       where: {
         id: {

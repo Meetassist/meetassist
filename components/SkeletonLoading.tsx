@@ -121,3 +121,33 @@ export function ScheduledMeetingsLoadingSkeleton() {
     </div>
   );
 }
+
+export function SidebarSkeleton() {
+  return (
+    <div className="space-y-2 px-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div
+          key={i}
+          className="bg-accent h-10 w-full animate-pulse rounded-md"
+        />
+      ))}
+    </div>
+  );
+}
+
+export function DetailsSkeleton() {
+  return (
+    <div className="w-full flex-1 animate-pulse space-y-6 pr-3">
+      <div className="bg-accent h-8 w-1/2 rounded" />
+      <div className="flex items-center gap-3">
+        <div className="bg-accent size-10 rounded-full" />
+        <div className="bg-accent h-4 w-24 rounded" />
+      </div>
+      <div className="space-y-3 px-7">
+        <div className="bg-accent h-4 w-full rounded" />
+        <div className="bg-accent h-4 w-full rounded" />
+        <div className="bg-accent h-4 w-3/4 rounded" />
+      </div>
+    </div>
+  );
+}

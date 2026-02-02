@@ -1,25 +1,47 @@
 "use client";
-import Image from "next/image";
-import { authClient } from "@/lib/auth-client";
-import { Google, Microsoft } from "@/utils/svgs";
-import { useState, useTransition } from "react";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { toast } from "sonner";
-import { Spinner } from "../ui/spinner";
 import {
   SignInWithGoogle,
   SignInWithMicrosoft,
 } from "@/lib/actions/authentication";
-export function LoginForm() {
-  const [isPendingGoogle, startTransitionGoogle] = useTransition();
-  const [isPendingMicrosoft, startTransitionMicrosoft] = useTransition();
-  const [lastMethod] = useState(() => {
+import { authClient } from "@/lib/auth-client";
+import { Google, Microsoft } from "@/utils/svgs";
+import Image from "next/image";
+import { useState, useSyncExternalStore, useTransition } from "react";
+import { toast } from "sonner";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
+
+const lastLoginMethodStore = {
+  subscribe: (callback: () => void) => {
+    window.addEventListener("storage", callback);
+    return () => window.removeEventListener("storage", callback);
+  },
+
+  getSnapshot: (): string | null => {
     return authClient.getLastUsedLoginMethod();
-  });
+  },
+
+  getServerSnapshot: (): string | null => {
+    return null;
+  },
+};
+
+type AuthProvider = "google" | "microsoft" | null;
+
+export function LoginForm() {
+  const [isPending, startTransition] = useTransition();
+  const [activeProvider, setActiveProvider] = useState<AuthProvider>(null);
+
+  const lastMethod = useSyncExternalStore(
+    lastLoginMethodStore.subscribe,
+    lastLoginMethodStore.getSnapshot,
+    lastLoginMethodStore.getServerSnapshot,
+  );
 
   async function handleSignInWithGoogle() {
-    startTransitionGoogle(async () => {
+    setActiveProvider("google");
+    startTransition(async () => {
       try {
         const result = await SignInWithGoogle();
         if (result.success && result.url) {
@@ -28,46 +50,56 @@ export function LoginForm() {
         } else {
           console.error("Failed to initiate Google sign-in:", result.message);
           toast.error(result.message);
+          setActiveProvider(null);
         }
       } catch (error) {
         console.error("Error signing in with Google:", error);
         toast.error("An unexpected error occurred");
+        setActiveProvider(null);
       }
     });
   }
+
   async function handleSignInWithMicrosoft() {
-    startTransitionMicrosoft(async () => {
+    setActiveProvider("microsoft");
+    startTransition(async () => {
       try {
         const result = await SignInWithMicrosoft();
 
         if (result.success && result.url) {
           window.location.href = result.url;
-          toast.success("Redirecting to microsoft...");
+          toast.success("Redirecting to Microsoft...");
         } else {
           console.error(
             "Failed to initiate Microsoft sign-in:",
             result.message,
           );
           toast.error(result.message);
+          setActiveProvider(null);
         }
       } catch (error) {
         console.error("Error signing in with Microsoft:", error);
         toast.error("An unexpected error occurred");
+        setActiveProvider(null);
       }
     });
   }
-
   return (
     <div className="flex min-h-dvh w-full flex-2 flex-col items-center justify-center px-6 pb-40 sm:px-8 md:px-10">
       <div className="flex items-center -space-x-4 text-2xl">
-        <Image src={"/meetassit.png"} alt="Logo" width={70} height={70} />
-        <span className="font-inter text-primary font-medium"> Meetassist</span>
+        <Image
+          src={"/meetassit.png"}
+          alt="Meetassist Logo"
+          width={70}
+          height={70}
+        />
+        <h1 className="font-inter text-primary font-medium"> Meetassist</h1>
       </div>
       <div className="mt-4 px-5 text-center">
         <div>
-          <h1 className="font-inter text-2xl font-medium">
+          <h2 className="font-inter text-2xl font-medium">
             Do Meetings Smarter
-          </h1>
+          </h2>
           <p className="text-muted-foreground mt-3 max-w-[410px] text-sm font-medium">
             Join online meetings for you or with you, take flawless notes, keep
             everything organized, and set smart reminders so you never miss a
@@ -76,15 +108,16 @@ export function LoginForm() {
         </div>
         <div className="mt-4">
           <div className="mt-4 flex flex-col items-center justify-center gap-4">
-            <span className="font-instrument inline-block text-xl">
+            <p className="font-instrument inline-block text-xl">
               Get Started With
-            </span>
+            </p>
             <Button
               onClick={handleSignInWithGoogle}
-              disabled={isPendingGoogle || isPendingMicrosoft}
+              disabled={isPending}
               variant={"outline"}
               type="button"
-              className="font-instrument relative w-full cursor-pointer py-5 text-sm font-medium"
+              aria-label="Continue with Google"
+              className="font-instrument relative w-full cursor-pointer py-5 text-sm font-medium disabled:cursor-not-allowed"
             >
               {lastMethod === "google" && (
                 <Badge className="font-instrument absolute -top-1 -right-1 font-medium text-white">
@@ -92,8 +125,11 @@ export function LoginForm() {
                 </Badge>
               )}
 
-              {isPendingGoogle ? (
-                <Spinner />
+              {isPending && activeProvider === "google" ? (
+                <>
+                  <Spinner />
+                  <span className="sr-only">Signing in with Google...</span>
+                </>
               ) : (
                 <>
                   <Google /> Continue with Google
@@ -102,10 +138,10 @@ export function LoginForm() {
             </Button>
             <Button
               onClick={handleSignInWithMicrosoft}
+              disabled={isPending}
               variant={"outline"}
-              // disabled={isPendingMicrosoft || isPendingGoogle}
-              disabled
               type="button"
+              aria-label="Continue with Microsoft"
               className="font-instrument relative w-full cursor-pointer py-5 text-sm font-medium disabled:cursor-not-allowed"
             >
               {lastMethod === "microsoft" && (
@@ -114,8 +150,11 @@ export function LoginForm() {
                 </Badge>
               )}
 
-              {isPendingMicrosoft ? (
-                <Spinner />
+              {isPending && activeProvider === "microsoft" ? (
+                <>
+                  <Spinner />
+                  <span className="sr-only">Signing in with Microsoft...</span>
+                </>
               ) : (
                 <>
                   <Microsoft /> Continue with Microsoft

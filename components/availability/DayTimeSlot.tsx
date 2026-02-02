@@ -29,6 +29,7 @@ interface DayTimeSlotProps {
   isCopyPopoverOpen: boolean;
   onCopyPopoverOpenChange: (open: boolean) => void;
   isDisabled?: boolean;
+  loading?: boolean;
   onCopySelectAll: (checked: boolean) => void;
   isCopyAllSelected: boolean;
 }
@@ -51,6 +52,7 @@ export function DayTimeSlot({
   isDisabled = false,
   isCopyAllSelected,
   onCopySelectAll,
+  loading,
 }: DayTimeSlotProps) {
   return (
     <div className="flex items-center gap-3">
@@ -98,6 +100,7 @@ export function DayTimeSlot({
               isDisabled={isDisabled}
               onSelectAll={onCopySelectAll}
               isAllSelected={isCopyAllSelected}
+              loading={loading}
             />
           </div>
         </>

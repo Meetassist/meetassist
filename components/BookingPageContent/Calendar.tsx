@@ -2,8 +2,8 @@
 import { CalendarProps, DateValue, useCalendar, useLocale } from "react-aria";
 import { useCalendarState } from "react-stately";
 import { createCalendar } from "@internationalized/date";
-import { CalenderHeader } from "./CalenderHeader";
-import { CalendarGrid } from "./CalenderGrid";
+import { CalenderHeader } from "./CalenderHeadar";
+import { CalendarGrid } from "./CalendarGrid";
 export function Calendar(
   props: CalendarProps<DateValue> & {
     isDateUnavailable?: (date: DateValue) => boolean;

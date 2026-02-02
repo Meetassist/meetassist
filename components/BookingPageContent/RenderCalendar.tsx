@@ -6,9 +6,10 @@ import {
   parseDate,
   today,
 } from "@internationalized/date";
+import type { Route } from "next";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Calendar } from "./Calender";
+import { Calendar } from "./Calendar";
 type RenderCalenderProps = {
   availability: {
     day: string;
@@ -17,6 +18,9 @@ type RenderCalenderProps = {
 };
 
 export function RenderCalender({ availability }: RenderCalenderProps) {
+  if (availability.length !== 7) {
+    throw new Error("Availability array must contain exactly 7 days");
+  }
   const searchParams = useSearchParams();
   const router = useRouter();
   const [date, setDate] = useState(() => {
@@ -27,19 +31,17 @@ export function RenderCalender({ availability }: RenderCalenderProps) {
       return today(getLocalTimeZone());
     }
   });
-
   function handleDateChange(date: DateValue) {
     setDate(date as CalendarDate);
-    const url = new URL(window.location.href);
-    url.searchParams.set("date", date.toString());
-    router.push(url.toString());
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("date", date.toString());
+    router.push(`${window.location.pathname}?${params.toString()}` as Route);
   }
+
   function isDateUnavailable(date: DateValue) {
     const dayOfWeek = date.toDate(getLocalTimeZone()).getDay();
     const adjustedIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    if (availability.length !== 7) {
-      throw new Error("Availability array must contain exactly 7 days");
-    }
+
     return !availability[adjustedIndex].isActive;
   }
 

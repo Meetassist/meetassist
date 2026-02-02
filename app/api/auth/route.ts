@@ -16,8 +16,8 @@ export async function GET() {
     const authUrl = nylas.auth.urlForOAuth2({
       clientId: nylasConfig.clientId,
       redirectUri: nylasConfig.redirectUri,
-      scope: ["calendar", "conferencing"],
       state: state,
+      provider: "google",
     });
 
     return Response.redirect(authUrl);

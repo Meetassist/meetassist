@@ -31,6 +31,11 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Spinner } from "../ui/spinner";
+import {
+  ConnectGoogleMeetButton,
+  ConnectMicrosoftButton,
+  ConnectZoomButton,
+} from "../ConnectButton";
 
 type VideoCallProvider =
   | "Google Meet"
@@ -40,14 +45,24 @@ type VideoCallProvider =
 
 type TCreateMeeting = {
   days: { day: string }[];
+  isGoogleConnected: boolean;
+  isMicrosoftConnected: boolean;
+  isZoomConnected: boolean;
 };
 
-export default function CreateMeeting({ days }: TCreateMeeting) {
+export default function CreateMeeting({
+  days,
+  isGoogleConnected,
+  isMicrosoftConnected,
+  isZoomConnected,
+}: TCreateMeeting) {
   const splitdays = days.map((item) => item.day.slice(0, 3)).join(", ");
   const [participants, setParticipants] = useState<number>(0);
   const [videoCallPlatform, setVideoCallPlatform] =
     useState<VideoCallProvider>("");
   const [isOpen, setIsOpen] = useState(false);
+  const [connectionMessage, setConnectionMessage] = useState<string>("");
+
   const {
     handleSubmit,
     register,
@@ -66,34 +81,65 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
     },
   });
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const newTitle = e.target.value;
     setValue("title", newTitle);
     setValue("url", generateUrl(newTitle), { shouldValidate: true });
-  };
+  }
 
-  const handlePlatformSelect = (platform: VideoCallProvider) => {
-    setVideoCallPlatform(platform);
-    setValue("videoCallSoftware", platform);
-  };
+  function handleSoftwareCheck(platform: VideoCallProvider) {
+    if (platform === "Google Meet" && !isGoogleConnected) {
+      setConnectionMessage("Your Google account has not been connected");
+      return false;
+    } else {
+      setConnectionMessage("");
+    }
+    if (platform === "Microsoft Teams" && !isMicrosoftConnected) {
+      setConnectionMessage("Your Microsoft account has not been connected");
+      return false;
+    } else {
+      setConnectionMessage("");
+    }
+    if (platform === "Zoom Meeting" && !isZoomConnected) {
+      setConnectionMessage("Your Zoom account has not been connected");
+      return false;
+    } else {
+      setConnectionMessage("");
+    }
+    return true;
+  }
+
+  function handlePlatformSelect(platform: VideoCallProvider) {
+    const isConnected = handleSoftwareCheck(platform);
+
+    if (isConnected) {
+      setVideoCallPlatform(platform);
+      setValue("videoCallSoftware", platform, { shouldValidate: true });
+    } else {
+      setVideoCallPlatform("");
+      setValue("videoCallSoftware", "");
+    }
+  }
 
   async function handleCreateMeeting(data: TCreateMeetingSchema) {
     try {
       const results = await CreateEvent(data);
       if (results.success) {
         toast.success("Event created");
+        handleDialogClose();
         setIsOpen(false);
       } else {
         toast.error(results.message);
       }
     } catch (error) {
+      console.error(error);
       toast.error("Failed to create event. Please try again.");
     }
   }
-
   const handleDialogClose = () => {
     setParticipants(0);
     setVideoCallPlatform("");
+    setConnectionMessage("");
     reset();
   };
   return (
@@ -115,7 +161,6 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
           </Button>
         </DialogTrigger>
 
-        {/* Show meeting details form after selecting type */}
         {participants === 1 || participants === 2 ? (
           <DialogContent
             className="max-h-[90vh] min-h-[550px] overflow-y-auto rounded-sm px-4 sm:max-w-[650px] sm:px-6"
@@ -282,6 +327,37 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                       {errors.videoCallSoftware.message}
                     </p>
                   )}
+                  <div className="flex items-center gap-4">
+                    <p className="text-xs text-red-500 sm:text-sm">
+                      {connectionMessage}
+                    </p>
+                    <div>
+                      {connectionMessage.includes("Microsoft") && (
+                        <ConnectMicrosoftButton
+                          variant="ghost"
+                          text="Connect Microsoft"
+                          icon={ArrowRight}
+                          styles="text-primary rounded-full border py-3"
+                        />
+                      )}
+                      {connectionMessage.includes("Google") && (
+                        <ConnectGoogleMeetButton
+                          text="Connect Google"
+                          variant="ghost"
+                          icon={ArrowRight}
+                          styles="text-primary rounded-full border py-3"
+                        />
+                      )}
+                      {connectionMessage.includes("Zoom") && (
+                        <ConnectZoomButton
+                          variant="ghost"
+                          text="Connect Zoom"
+                          icon={ArrowRight}
+                          styles="text-primary rounded-full border py-3"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Availability Display */}
@@ -366,9 +442,9 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
               >
                 <CardContent className="flex items-center justify-between px-3 py-4">
                   <div>
-                    <h2 className="font-instrument text-xl font-medium sm:text-2xl">
+                    <p className="font-instrument text-xl font-medium sm:text-2xl">
                       One-on-one
-                    </h2>
+                    </p>
                     <div className="mt-2 space-y-0.5">
                       <p className="text-muted-foreground flex items-center gap-2 text-xs sm:text-sm">
                         1 host → 1 Invitee
@@ -389,6 +465,7 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
                     setParticipants(2);
                     setValue("maxParticipants", 10);
                   }
@@ -400,12 +477,12 @@ export default function CreateMeeting({ days }: TCreateMeeting) {
               >
                 <CardContent className="flex items-center justify-between px-3 py-4">
                   <div>
-                    <h2 className="font-instrument text-xl font-medium sm:text-2xl">
+                    <p className="font-instrument text-xl font-medium sm:text-2xl">
                       Group
-                    </h2>
+                    </p>
                     <div className="mt-2 space-y-0.5">
                       <p className="text-muted-foreground flex items-center gap-2 text-xs sm:text-sm">
-                        1 host → Multiple Invitees{" "}
+                        1 host → Multiple Invitees
                       </p>
                       <p className="text-muted-foreground text-xs sm:text-sm">
                         Online class, Group chats, etc

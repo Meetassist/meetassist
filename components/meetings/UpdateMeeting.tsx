@@ -32,6 +32,11 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
+import {
+  ConnectGoogleMeetButton,
+  ConnectMicrosoftButton,
+  ConnectZoomButton,
+} from "../ConnectButton";
 
 type VideoCallProvider =
   | "Google Meet"
@@ -42,14 +47,24 @@ type VideoCallProvider =
 type TCreateMeeting = {
   days: { day: string }[];
   id: string;
+  isGoogleConnected: boolean;
+  isMicrosoftConnected: boolean;
+  isZoomConnected: boolean;
 };
 
-export default function UpdateMeeting({ days, id }: TCreateMeeting) {
+export default function UpdateMeeting({
+  days,
+  id,
+  isGoogleConnected,
+  isMicrosoftConnected,
+  isZoomConnected,
+}: TCreateMeeting) {
   const splitdays = days.map((item) => item.day.slice(0, 3)).join(", ");
   const [participants, setParticipants] = useState<number>(0);
   const [videoCallPlatform, setVideoCallPlatform] =
     useState<VideoCallProvider>("");
   const [isOpen, setIsOpen] = useState(false);
+  const [connectionMessage, setConnectionMessage] = useState<string>("");
   const {
     handleSubmit,
     register,
@@ -72,10 +87,39 @@ export default function UpdateMeeting({ days, id }: TCreateMeeting) {
     setValue("title", newTitle);
     setValue("url", generateUrl(newTitle), { shouldValidate: true });
   };
-  const handlePlatformSelect = (platform: VideoCallProvider) => {
-    setVideoCallPlatform(platform);
-    setValue("videoCallSoftware", platform);
-  };
+  function handleSoftwareCheck(platform: VideoCallProvider) {
+    if (platform === "Google Meet" && !isGoogleConnected) {
+      setConnectionMessage("Your Google account has not been connected");
+      return false;
+    } else {
+      setConnectionMessage("");
+    }
+    if (platform === "Microsoft Teams" && !isMicrosoftConnected) {
+      setConnectionMessage("Your Microsoft account has not been connected");
+      return false;
+    } else {
+      setConnectionMessage("");
+    }
+    if (platform === "Zoom Meeting" && !isZoomConnected) {
+      setConnectionMessage("Your Zoom account has not been connected");
+      return false;
+    } else {
+      setConnectionMessage("");
+    }
+    return true;
+  }
+
+  function handlePlatformSelect(platform: VideoCallProvider) {
+    const isConnected = handleSoftwareCheck(platform);
+
+    if (isConnected) {
+      setVideoCallPlatform(platform);
+      setValue("videoCallSoftware", platform, { shouldValidate: true });
+    } else {
+      setVideoCallPlatform("");
+      setValue("videoCallSoftware", "");
+    }
+  }
   async function handleUpdateMeeting(data: TCreateMeetingSchema) {
     try {
       const results = await UpdateEvent(data, id);
@@ -93,6 +137,7 @@ export default function UpdateMeeting({ days, id }: TCreateMeeting) {
   const handleDialogClose = () => {
     setParticipants(0);
     setVideoCallPlatform("");
+    setConnectionMessage("");
     reset();
   };
   return (
@@ -276,6 +321,38 @@ export default function UpdateMeeting({ days, id }: TCreateMeeting) {
                       {errors.videoCallSoftware.message}
                     </p>
                   )}
+
+                  <div className="flex items-center gap-4">
+                    <p className="text-xs text-red-500 sm:text-sm">
+                      {connectionMessage}
+                    </p>
+                    <div>
+                      {connectionMessage.includes("Microsoft") && (
+                        <ConnectMicrosoftButton
+                          variant="ghost"
+                          text="Connect Microsoft"
+                          icon={ArrowRight}
+                          styles="text-primary rounded-full border py-3"
+                        />
+                      )}
+                      {connectionMessage.includes("Google") && (
+                        <ConnectGoogleMeetButton
+                          text="Connect Google"
+                          variant="ghost"
+                          icon={ArrowRight}
+                          styles="text-primary rounded-full border py-3"
+                        />
+                      )}
+                      {connectionMessage.includes("Zoom") && (
+                        <ConnectZoomButton
+                          variant="ghost"
+                          text="Connect Zoom"
+                          icon={ArrowRight}
+                          styles="text-primary rounded-full border py-3"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
                 {/* Availability Display */}
                 <div className="mt-4">

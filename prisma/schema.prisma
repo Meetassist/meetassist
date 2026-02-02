@@ -17,25 +17,39 @@ enum DAY {
   Sunday
 }
 
+enum RecordingStatus {
+  PENDING
+  WAITING_FOR_ENTRY
+  RECORDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
 model User {
-  id              String         @id @default(uuid())
-  name            String
-  email           String
-  emailVerified   Boolean        @default(false)
-  image           String?
-  createdAt       DateTime       @default(now())
-  timezone        String         @default("UTC")
-  updatedAt       DateTime       @updatedAt
-  sessions        Session[]
-  accounts        Account[]
-  availabilities  Availability[]
-  eventType       EventType[]
-  lastLoginMethod String?
-  role            String         @default("USER")
-  // Nylas calendar integration
-  grantId         String?        @unique
-  grantEmail      String?
-  confGrantId     String?  
+  id                  String             @id @default(uuid())
+  name                String
+  email               String
+  emailVerified       Boolean            @default(false)
+  image               String?
+  createdAt           DateTime           @default(now())
+  timezone            String             @default("UTC")
+  updatedAt           DateTime           @updatedAt
+  sessions            Session[]
+  accounts            Account[]
+  availabilities      Availability[]
+  eventType           EventType[]
+  recordings          MeetingRecording[]
+  lastLoginMethod     String?
+  role                String             @default("USER")
+  googleEmail         String?
+  googleGrantId       String?
+  microsoftGrantId    String?
+  microsoftEmail      String?
+  microsoftCalendarId String?
+  zoomGrantId         String?
+
   @@unique([email])
   @@map("user")
 }
@@ -86,12 +100,13 @@ model Verification {
 
   @@map("verification")
 }
+
 model Availability {
   id        String   @id @default(uuid())
   userId    String
   day       DAY
   fromTime  String
-  toTime    String 
+  toTime    String
   isActive  Boolean  @default(true)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -105,7 +120,7 @@ model EventType {
   userId            String
   title             String
   duration          Int
-  maxParticipants   Int      @default(1)  
+  maxParticipants   Int      @default(1)
   isActive          Boolean  @default(true)
   url               String   @unique
   videoCallSoftware String
@@ -115,4 +130,26 @@ model EventType {
 
   @@index([url])
   @@map("event_type")
+}
+
+model MeetingRecording {
+  id             String          @id @default(uuid())
+  userId         String
+  meetingName    String?
+  meetingUrl     String
+  notetakerId    String?         @unique
+  grantId        String?
+  provider       String?
+  status         RecordingStatus @default(PENDING)
+  transcriptText String?         @db.Text
+  summary        String?         @db.Text
+  actionItems   String[]   @default([])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([notetakerId])
+  @@index([status])
+  @@map("meeting_recording")
 }

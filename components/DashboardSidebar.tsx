@@ -17,6 +17,9 @@ type DashboardSidebarProps = React.ComponentProps<typeof Sidebar> & {
   email: string | null;
   image: string | null;
   days: { day: string }[];
+  isGoogleConnected: boolean;
+  isMicrosoftConnected: boolean;
+  isZoomConnected: boolean;
 };
 
 export function DashboardSidebar({
@@ -24,13 +27,21 @@ export function DashboardSidebar({
   image,
   email,
   days,
+  isGoogleConnected,
+  isMicrosoftConnected,
+  isZoomConnected,
   ...props
 }: DashboardSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <Logo />
-        <CreateMeeting days={days} />
+        <CreateMeeting
+          days={days}
+          isGoogleConnected={isGoogleConnected}
+          isMicrosoftConnected={isMicrosoftConnected}
+          isZoomConnected={isZoomConnected}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavMain />

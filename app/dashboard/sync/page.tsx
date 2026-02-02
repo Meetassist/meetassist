@@ -1,52 +1,50 @@
-import { ConnectButton } from "@/components/ConnectButton";
-import { DisconnectButton } from "@/components/DisconnectButton";
-import { Button } from "@/components/ui/button";
+export const dynamic = "force-dynamic";
+import {
+  ConnectGoogleMeetButton,
+  ConnectMicrosoftButton,
+  ConnectZoomButton,
+} from "@/components/ConnectButton";
+import {
+  DisconnectGoogleButton,
+  DisconnectMicrosoftButton,
+  DisconnectZoomButton,
+} from "@/components/DisconnectButton";
 import { Card, CardContent } from "@/components/ui/card";
-import { getNylasConnectionStatus } from "@/lib/actions/nylasAction";
+import { getAllConnectionStatuses } from "@/utils/helper";
+import { Google, MicrosoftTeams, Zoom } from "@/utils/svgs";
 import { Metadata } from "next";
-import Image from "next/image";
-
 export const metadata: Metadata = {
-  title: "Meetassist - Sync",
+  title: "Sync Integrations | Meetassist",
   description: "Sync your calendar, contacts, and meeting platforms",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
-const SYNC = [
-  {
-    id: 1,
-    image: "/sync_1.svg",
-    name: "Google Meet",
-    content:
-      "Bring recorded video of your Google Meet meetings to the platform",
-    current: "Disconnect",
-  },
-  {
-    id: 2,
-    image: "/sync_2.svg",
-    name: "Zoom",
-    content: "Bring recorded video of your Zoom meetings to the platform",
-    current: "Disconnect",
-  },
-  {
-    id: 3,
-    image: "/sync_3.svg",
-    name: "Microsoft Teams",
-    content:
-      "Bring recorded video of your Microsoft Teams meetings to the platform",
-    current: "Disconnect",
-  },
-];
-export default async function Page() {
-  let isConnected = false;
-  let connection = null;
 
+export default async function Page() {
+  let connectionStatuses;
   try {
-    const result = await getNylasConnectionStatus();
-    isConnected = result.isConnected;
-    connection = result.connection;
+    connectionStatuses = await getAllConnectionStatuses();
   } catch (error) {
-    console.error("Failed to fetch Nylas connection status:", error);
+    console.error("Failed to fetch connection statuses:", error);
+    return (
+      <section className="mt-10 px-6">
+        <p className="text-destructive">
+          Unable to load integration statuses. Please try again later.
+        </p>
+      </section>
+    );
   }
 
+  const {
+    googleConnection,
+    isGoogleConnected,
+    isMicrosoftConnected,
+    isZoomConnected,
+    microsoftConnection,
+    zoomConnection,
+  } = connectionStatuses;
   return (
     <section className="mt-10 px-6">
       <div>
@@ -63,73 +61,78 @@ export default async function Page() {
           <Card className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none">
             <CardContent className="flex items-center justify-between">
               <div className="flex items-center gap-5">
-                <Image
-                  src={"/sync_4.svg"}
-                  alt={"Calendar & Contacts"}
-                  width={40}
-                  height={40}
-                />
+                <Google className="h-10 w-10" />
                 <div>
                   <p className="font-instrument text-xl font-medium">
-                    Calendar & Contacts
+                    Google Calendar
                   </p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground hidden text-sm md:block">
                     Sync your calendar and contacts to streamline scheduling and
                     communication
                   </p>
                 </div>
               </div>
-              {isConnected && connection ? (
-                <DisconnectButton />
+              {isGoogleConnected && googleConnection ? (
+                <DisconnectGoogleButton />
               ) : (
-                <ConnectButton />
+                <ConnectGoogleMeetButton
+                  text="Connect"
+                  variant="default"
+                  styles="rounded-sm border py-5 text-white bg-primary"
+                />
               )}
             </CardContent>
           </Card>
-          {SYNC.map((sync) => (
-            <Card
-              key={sync.id}
-              className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none"
-            >
-              <CardContent className="flex items-center justify-between">
-                <div className="flex items-center gap-5">
-                  <Image
-                    src={sync.image}
-                    alt={sync.name}
-                    width={40}
-                    height={40}
-                  />
-                  <div>
-                    <p className="font-instrument text-xl font-medium">
-                      {sync.name}
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      {sync.content}
-                    </p>
-                  </div>
+          <Card className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none">
+            <CardContent className="flex items-center justify-between">
+              <div className="flex items-center gap-5">
+                <Zoom className="h-10 w-10" />
+                <div>
+                  <p className="font-instrument text-xl font-medium">Zoom</p>
+                  <p className="text-muted-foreground hidden text-sm md:block">
+                    Bring recorded video of your Zoom meetings to the platform
+                  </p>
                 </div>
-                <Button
-                  type="button"
-                  disabled={true}
-                  variant={sync.current === "Disconnect" ? "ghost" : "default"}
-                  className={`font-instrument cursor-pointer rounded-sm py-5 ${sync.current === "Disconnect" ? "border-border text-foreground border" : "text-white"} `}
-                >
-                  {sync.current}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+
+              {isZoomConnected && zoomConnection ? (
+                <DisconnectZoomButton />
+              ) : (
+                <ConnectZoomButton
+                  text="Connect"
+                  variant="default"
+                  styles="rounded-sm border py-5 text-white bg-primary"
+                />
+              )}
+            </CardContent>
+          </Card>
+          <Card className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none">
+            <CardContent className="flex items-center justify-between">
+              <div className="flex items-center gap-5">
+                <MicrosoftTeams className="h-10 w-10" />
+                <div>
+                  <p className="font-instrument text-xl font-medium">
+                    Microsoft Teams
+                  </p>
+                  <p className="text-muted-foreground hidden text-sm md:block">
+                    Bring recorded video of your Microsoft Teams meetings to the
+                    platform
+                  </p>
+                </div>
+              </div>
+              {isMicrosoftConnected && microsoftConnection ? (
+                <DisconnectMicrosoftButton />
+              ) : (
+                <ConnectMicrosoftButton
+                  variant="default"
+                  text="Connect"
+                  styles="rounded-sm border py-5 text-white bg-primary"
+                />
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
   );
-}
-
-{
-  /* <Button asChild>
-          <Link href={"/api/auth"}>
-            <Calendar className="mr-2 size-4" />
-            Connect calender to your account
-          </Link>
-        </Button> */
 }

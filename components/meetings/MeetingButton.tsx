@@ -25,17 +25,25 @@ import { toast } from "sonner";
 import { Spinner } from "../ui/spinner";
 import UpdateMeeting from "./UpdateMeeting";
 
+type MeetingButton = {
+  id: string;
+  url: string;
+  email: string;
+  days: { day: string }[];
+  isGoogleConnected: boolean;
+  isMicrosoftConnected: boolean;
+  isZoomConnected: boolean;
+};
+
 export function MeetingButton({
   id,
   url,
   email,
   days,
-}: {
-  id: string;
-  url: string;
-  email: string;
-  days: { day: string }[];
-}) {
+  isGoogleConnected,
+  isMicrosoftConnected,
+  isZoomConnected,
+}: MeetingButton) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -72,6 +80,8 @@ export function MeetingButton({
       <DropdownMenuContent className="w-40" align="end">
         <DropdownMenuItem>
           <Link
+            target="_blank"
+            rel="noopener noreferrer"
             href={{
               pathname: `/${encodeURIComponent(email)}/${encodeURIComponent(url)}`,
             }}
@@ -81,7 +91,13 @@ export function MeetingButton({
             Preview
           </Link>
         </DropdownMenuItem>
-        <UpdateMeeting days={days} id={id} />
+        <UpdateMeeting
+          days={days}
+          id={id}
+          isGoogleConnected={isGoogleConnected}
+          isMicrosoftConnected={isMicrosoftConnected}
+          isZoomConnected={isZoomConnected}
+        />
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
           <AlertDialogTrigger asChild>
             <DropdownMenuItem
@@ -99,9 +115,9 @@ export function MeetingButton({
                 Are you sure?
               </AlertDialogTitle>
               <AlertDialogDescription className="font-instrument text-muted-foreground font-medium">
-                This action cannot be undone. This will permanently delete your
-                meeting and remove your data from our servers. People you have
-                shared the link with will no longer have access to it.
+                This action cannot be undone. Users will be unable to schedule
+                further meetings with deleted event types. Meetings previously
+                scheduled will not be affected.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

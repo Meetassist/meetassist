@@ -279,6 +279,7 @@ export function TimeAvailable({ data }: TimeAvailableProps) {
             handlePopoverOpenChange(day.id, open)
           }
           isDisabled={isPending}
+          loading={isPending}
           isCopyAllSelected={isAllSelected(day.id)}
           onCopySelectAll={(checked) => handleSelectAll(day.id, checked)}
         />

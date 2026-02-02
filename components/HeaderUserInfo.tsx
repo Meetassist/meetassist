@@ -1,9 +1,9 @@
 import { getUserSession } from "@/lib/getSession";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-
-export async function HeaderUserInfo() {
+import { Suspense } from "react";
+import { UserLoadingState } from "./SkeletonLoading";
+async function UserInfo() {
   const session = await getUserSession();
-
   if (!session?.user) {
     return null;
   }
@@ -27,7 +27,14 @@ export async function HeaderUserInfo() {
       </Avatar>
       <p className="text-xl font-medium">
         {session.user.name || "Unknown User"}
-      </p>{" "}
+      </p>
     </div>
+  );
+}
+export function HeaderUserInfo() {
+  return (
+    <Suspense fallback={<UserLoadingState />}>
+      <UserInfo />
+    </Suspense>
   );
 }
