@@ -1,12 +1,17 @@
+export const dynamic = "force-dynamic";
 import { TimeAvailable } from "@/components/availability/TimeAvailable";
 import { AvailabilityLoadingSkeleton } from "@/components/SkeletonLoading";
 import { Separator } from "@/components/ui/separator";
 import { Availability } from "@/lib/actions/availabilityAction";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 export const metadata: Metadata = {
-  title: "Meetassist - Availability",
+  title: "Availability Settings | Meetassist",
   description: "Set up your work time availability for meetings",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 async function AvailabilityContent() {
@@ -23,7 +28,7 @@ async function AvailabilityContent() {
     }
     return <TimeAvailable data={data} />;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return (
       <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-4">
         <p className="text-red-600">

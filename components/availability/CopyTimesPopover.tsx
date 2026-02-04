@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Spinner } from "../ui/spinner";
 
 interface AvailabilityDay {
   id: string;
@@ -21,6 +22,7 @@ interface CopyTimesPopoverProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   isDisabled: boolean;
+  loading?: boolean;
   onSelectAll: (checked: boolean) => void;
   isAllSelected: boolean;
 }
@@ -36,6 +38,7 @@ export function CopyTimesPopover({
   isDisabled,
   isAllSelected,
   onSelectAll,
+  loading,
 }: CopyTimesPopoverProps) {
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
@@ -102,10 +105,13 @@ export function CopyTimesPopover({
         <div className="pt-4 pb-2">
           <Button
             onClick={onApply}
-            disabled={selectedDays.length === 0}
+            disabled={selectedDays.length === 0 || loading}
             className="font-instrument w-full cursor-pointer rounded-full text-xs font-medium text-white"
+            aria-label={
+              loading ? "Applying times..." : "Apply times to selected days"
+            }
           >
-            Apply
+            {loading ? <Spinner /> : "Apply"}
           </Button>
         </div>
       </PopoverContent>

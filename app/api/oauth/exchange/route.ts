@@ -56,14 +56,13 @@ export async function GET(req: NextRequest) {
     await db.user.update({
       where: { id: session?.user?.id },
       data: {
-        grantId,
-        grantEmail: email,
-        confGrantId: grantId,
+        googleGrantId: grantId,
+        googleEmail: email,
       },
     });
 
     console.log("OAuth successful for user:", session?.user?.id);
-    redirect("/dashboard?success=calendar_connected");
+    redirect("/dashboard/sync");
   } catch (error) {
     cookieStore.delete("oauth_state");
     console.error("OAuth exchange failed:", error);

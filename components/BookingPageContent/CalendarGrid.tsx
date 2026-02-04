@@ -1,7 +1,7 @@
 import { DateDuration, DateValue, endOfMonth } from "@internationalized/date";
 import { useCalendarGrid } from "react-aria";
 import { type CalendarState } from "react-stately";
-import { CalendarCell } from "./CalenderCell";
+import { CalendarCell } from "./CalendarCell";
 export function CalendarGrid({
   state,
   offset = {},
@@ -33,6 +33,7 @@ export function CalendarGrid({
           </tr>
         </thead>
         <tbody className="">
+          {/* {state.getDatesInWeek(weekIndex, startDate).map((date, i) => { */}
           {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
             <tr key={weekIndex}>
               {state.getDatesInWeek(weekIndex).map((date, i) => {

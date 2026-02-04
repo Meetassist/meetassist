@@ -8,8 +8,102 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { getUserSession } from "@/lib/getSession";
 import db from "@/lib/prisma";
+import { DAY_ORDER, getAllConnectionStatuses } from "@/utils/helper";
+import { Metadata } from "next";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+const siteConfig = {
+  name: "Meetassist",
+  url: "",
+  //  url: process.env.NEXT_PUBLIC_APP_URL || "https://meetassist.com",
+  ogImage:
+    "https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcDHS8PhSZhqGg0oZln3RVB2YUcPierfmHvwp4",
+  description:
+    "AI-powered meeting assistant that joins your online meetings, takes flawless notes, keeps everything organized, and sets smart reminders so you never miss a beat.",
+
+  keywords: [
+    "AI meeting assistant",
+    "automated meeting notes",
+    "Zoom meeting recorder",
+    "Google Meet transcription",
+    "Microsoft Teams bot",
+    "meeting note taker AI",
+    "online meeting assistant",
+    "automatic meeting minutes",
+    "meeting scheduler bot",
+    "virtual meeting assistant",
+  ],
+};
+
+export const metadata: Metadata = {
+  // metadataBase: new URL(siteConfig.url),
+  title: {
+    default: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
+    template: "%s | Meetassist",
+  },
+
+  description: siteConfig.description,
+
+  keywords: siteConfig.keywords,
+  authors: [
+    {
+      name: "Meetassist Team",
+      url: siteConfig.url,
+    },
+  ],
+  creator: "Meetassist",
+  publisher: "Meetassist",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
+    description: siteConfig.description,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Meetassist - AI-powered meeting assistant dashboard",
+        type: "image/png",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    site: "@meetassistAI",
+    creator: "@meetassist",
+    title: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+  },
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+  category: "productivity",
+  alternates: {
+    canonical: siteConfig.url,
+  },
+};
 
 export default async function RootLayout({
   children,
@@ -27,21 +121,11 @@ export default async function RootLayout({
     },
   });
 
-  const dayOrder = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
+  const DAY_INDEX_MAP = new Map(DAY_ORDER.map((day, index) => [day, index]));
 
   const sortedDays = days.sort((a, b) => {
-    const aIndex = dayOrder.indexOf(a.day);
-    const bIndex = dayOrder.indexOf(b.day);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
+    const aIndex = DAY_INDEX_MAP.get(a.day) ?? Infinity;
+    const bIndex = DAY_INDEX_MAP.get(b.day) ?? Infinity;
     return aIndex - bIndex;
   });
   const image = session?.user?.image ?? null;
@@ -55,7 +139,17 @@ export default async function RootLayout({
       .map((n) => n[0])
       .join("")
       .toUpperCase() || "?";
-
+  let isGoogleConnected = false;
+  let isMicrosoftConnected = false;
+  let isZoomConnected = false;
+  try {
+    const statuses = await getAllConnectionStatuses();
+    isGoogleConnected = statuses.isGoogleConnected;
+    isMicrosoftConnected = statuses.isMicrosoftConnected;
+    isZoomConnected = statuses.isZoomConnected;
+  } catch (error) {
+    console.error("Failed to fetch connection statuses:", error);
+  }
   return (
     <>
       <SidebarProvider>
@@ -64,6 +158,9 @@ export default async function RootLayout({
           email={email}
           image={image}
           days={sortedDays}
+          isGoogleConnected={isGoogleConnected}
+          isMicrosoftConnected={isMicrosoftConnected}
+          isZoomConnected={isZoomConnected}
         />
         <SidebarInset>
           <header className="flex items-center justify-between px-6 pt-5 pb-2 md:hidden">
@@ -71,7 +168,6 @@ export default async function RootLayout({
               <SidebarTrigger />
               <Image
                 src="/meetassit.png"
-                //  src="/meetassist-light.svg"
                 alt="meetassistLogo"
                 className="object-cover"
                 width={40}

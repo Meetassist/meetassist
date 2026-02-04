@@ -25,7 +25,7 @@ export function TimeButtonSlot({
   };
 
   return (
-    <div className="mt-3 max-h-[350px] space-y-2 overflow-y-auto">
+    <div className="mt-3 space-y-2 overflow-x-hidden overflow-y-auto pb-4 md:max-h-[350px]">
       {availableSlots.length > 0 ? (
         <>
           {availableSlots.map((slot) => {
@@ -53,6 +53,7 @@ export function TimeButtonSlot({
                       className="flex-1"
                     >
                       <Button
+                        asChild
                         className="w-full cursor-pointer py-5 text-base font-medium text-white"
                         size="lg"
                       >

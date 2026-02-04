@@ -46,7 +46,8 @@ export async function BookingPageData(
     });
     return data;
   } catch (error) {
-    console.log("There is an error with getting booking page data", error);
+    console.error("There is an error with getting booking page data", error);
+    throw error;
   }
 }
 
@@ -71,29 +72,59 @@ export async function GetTimeTableData(email: string, selectedDate: Date) {
         id: true,
         user: {
           select: {
-            grantEmail: true,
-            grantId: true,
+            googleGrantId: true,
+            googleEmail: true,
+            microsoftGrantId: true,
+            microsoftEmail: true,
           },
         },
       },
     });
 
-    if (!data || !data.user.grantId || !data.user.grantEmail) {
-      throw new Error("User availability or grant credentials not found");
+    const hasGoogleCalendar =
+      data?.user.googleGrantId && data?.user.googleEmail;
+    const hasMicrosoftCalendar =
+      data?.user.microsoftGrantId && data?.user.microsoftEmail;
+
+    if (!data || (!hasGoogleCalendar && !hasMicrosoftCalendar)) {
+      throw new Error(
+        "User availability or at least one calendar provider not found",
+      );
     }
 
-    const nylasCalenderData = await nylas.calendars.getFreeBusy({
-      identifier: data.user.grantId,
-      requestBody: {
-        startTime: Math.floor(startOfday.getTime() / 1000),
-        endTime: Math.floor(endofDay.getTime() / 1000),
-        emails: [data.user.grantEmail],
-      },
-    });
-    return { data, nylasCalenderData };
+    const freeBusyChecks = [];
+
+    if (data.user.googleGrantId) {
+      freeBusyChecks.push(
+        nylas.calendars.getFreeBusy({
+          identifier: data.user.googleGrantId,
+          requestBody: {
+            startTime: Math.floor(startOfday.getTime() / 1000),
+            endTime: Math.floor(endofDay.getTime() / 1000),
+            emails: [data.user.googleEmail as string],
+          },
+        }),
+      );
+    }
+
+    if (data.user.microsoftGrantId) {
+      freeBusyChecks.push(
+        nylas.calendars.getFreeBusy({
+          identifier: data.user.microsoftGrantId,
+          requestBody: {
+            startTime: Math.floor(startOfday.getTime() / 1000),
+            endTime: Math.floor(endofDay.getTime() / 1000),
+            emails: [data.user.microsoftEmail as string],
+          },
+        }),
+      );
+    }
+
+    const allBusyTimes = await Promise.all(freeBusyChecks);
+    return { data, allBusyTimes };
   } catch (error) {
-    console.log(error);
-    throw new Error("There is an error with get this data");
+    console.error(error);
+    throw error;
   }
 }
 
@@ -114,9 +145,12 @@ export async function CreateBooking(data: TBookingFormSchema) {
         email: validatedData.userEmail,
       },
       select: {
-        grantEmail: true,
-        grantId: true,
-        confGrantId: true,
+        googleGrantId: true,
+        googleEmail: true,
+        microsoftGrantId: true,
+        microsoftEmail: true,
+        microsoftCalendarId: true,
+        zoomGrantId: true,
       },
     });
 
@@ -135,12 +169,6 @@ export async function CreateBooking(data: TBookingFormSchema) {
       throw new Error("User not found in database");
     }
 
-    if (!userData.grantEmail || !userData.grantId) {
-      throw new Error(
-        "User has not connected their calendar. Please contact the event host.",
-      );
-    }
-
     if (!eventTypeData) {
       throw new Error("Event type not found or has been deleted");
     }
@@ -150,6 +178,7 @@ export async function CreateBooking(data: TBookingFormSchema) {
     const duration = eventTypeData.duration;
     const startDateTime = new Date(`${eventDate}T${fromTime}:00`);
     const eventDateTime = new Date(startDateTime.getTime() + duration * 60000);
+
     const participantsData = [
       {
         name: validatedData.name,
@@ -163,36 +192,59 @@ export async function CreateBooking(data: TBookingFormSchema) {
     ];
 
     let conferencingConfig;
+    let grantId: string;
+    let calendarId: string;
 
     if (eventTypeData.videoCallSoftware === "Google Meet") {
+      if (!userData.googleGrantId || !userData.googleEmail) {
+        throw new Error(
+          "User has not connected their google account for video conferencing.",
+        );
+      }
       conferencingConfig = {
         autocreate: {},
         provider: "Google Meet" as Provider,
       };
-    } else if (
-      ["Zoom Meeting", "Microsoft Teams"].includes(
-        eventTypeData.videoCallSoftware,
-      )
-    ) {
-      if (!userData.confGrantId) {
+      grantId = userData.googleGrantId;
+      calendarId = userData.googleEmail;
+    } else if (eventTypeData.videoCallSoftware === "Microsoft Teams") {
+      if (!userData.microsoftGrantId || !userData.microsoftCalendarId) {
         throw new Error(
-          "User has not connected their conferencing account for Zoom/Teams. Please contact the event host.",
+          "User has not connected their microsoft account for video conferencing.",
         );
       }
-      // Zoom and Teams need conf_grant_id
+      conferencingConfig = {
+        autocreate: {},
+        provider: "Microsoft Teams" as Provider,
+      };
+      grantId = userData.microsoftGrantId;
+      calendarId = userData.microsoftCalendarId;
+    } else if (eventTypeData.videoCallSoftware === "Zoom Meeting") {
+      if (
+        !userData.zoomGrantId ||
+        !userData.googleGrantId ||
+        !userData.googleEmail
+      ) {
+        throw new Error(
+          "User has not connected their Zoom account and Google Calendar for video conferencing.",
+        );
+      }
       conferencingConfig = {
         autocreate: {
-          conf_grant_id: userData.confGrantId,
+          conf_grant_id: userData.zoomGrantId,
         },
-        provider: eventTypeData.videoCallSoftware as Provider,
+        provider: "Zoom Meeting" as Provider,
       };
+      grantId = userData.googleGrantId;
+      calendarId = userData.googleEmail;
     } else {
       throw new Error(
         `Unsupported video conferencing provider: ${eventTypeData.videoCallSoftware}`,
       );
     }
+
     await nylas.events.create({
-      identifier: userData.grantId,
+      identifier: grantId!,
       requestBody: {
         title: eventTypeData.title,
         description: validatedData.description,
@@ -204,7 +256,7 @@ export async function CreateBooking(data: TBookingFormSchema) {
         participants: participantsData,
       },
       queryParams: {
-        calendarId: userData.grantEmail,
+        calendarId: calendarId!,
         notifyParticipants: true,
       },
     });

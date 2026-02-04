@@ -6,12 +6,14 @@ import { MeetingsLoadingSkeleton } from "../SkeletonLoading";
 import { Card, CardContent } from "../ui/card";
 import { CopyMeetingLink } from "./CopyMeetingLink";
 import { MeetingButton } from "./MeetingButton";
+import { redirect } from "next/navigation";
+import { getAllConnectionStatuses } from "@/utils/helper";
 
 async function DataForMeeting() {
   const data = await MeetingsData();
   const session = await getUserSession();
   if (!session?.user?.id) {
-    return <div>Please sign in to view your meetings.</div>;
+    redirect("/login");
   }
   const days = await db.availability.findMany({
     where: { userId: session.user.id, isActive: true },
@@ -39,7 +41,13 @@ async function DataForMeeting() {
   }
 
   if (data.length === 0) {
-    return <div>No meetings found.</div>;
+    return (
+      <div className="mt-8 w-full pb-4">
+        <p className="text-muted-foreground font-inter mt-4 text-2xl">
+          You have not created a meeting Link yet, create one to get started.
+        </p>
+      </div>
+    );
   }
 
   const sortedDays = days.sort((a, b) => {
@@ -49,6 +57,9 @@ async function DataForMeeting() {
     if (bIndex === -1) return -1;
     return aIndex - bIndex;
   });
+
+  const { isGoogleConnected, isMicrosoftConnected, isZoomConnected } =
+    await getAllConnectionStatuses();
 
   return (
     <>
@@ -90,6 +101,9 @@ async function DataForMeeting() {
                   url={meeting.url}
                   email={meeting.user.email}
                   days={sortedDays}
+                  isGoogleConnected={isGoogleConnected}
+                  isMicrosoftConnected={isMicrosoftConnected}
+                  isZoomConnected={isZoomConnected}
                 />
               </div>
             </CardContent>

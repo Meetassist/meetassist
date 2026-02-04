@@ -1,6 +1,6 @@
-import { BookingForm } from "@/components/BookingPageConent/BookingForm";
-import { RenderCalender } from "@/components/BookingPageConent/RenderCalender";
-import { TimeTable } from "@/components/BookingPageConent/TimeTable";
+import { BookingForm } from "@/components/BookingPageContent/BookingForm";
+import { RenderCalender } from "@/components/BookingPageContent/RenderCalendar";
+import { TimeTable } from "@/components/BookingPageContent/TimeTable";
 import { Button } from "@/components/ui/button";
 import { BookingPageData } from "@/lib/actions/bookingpageAction";
 import { formatTimeRange } from "@/utils/helper";
@@ -19,11 +19,12 @@ export default async function Page({
   const { date, time } = await searchParams;
   let selectedDate = new Date();
   if (date) {
-    const parsedDate = new Date(date);
+    const parsedDate = parseISO(date);
     if (!isNaN(parsedDate.getTime())) {
       selectedDate = parsedDate;
     }
   }
+
   const showSlots = !!date;
   const showForm = !!date && !!time;
   const originalEmail = decodeURIComponent(username);
@@ -31,14 +32,16 @@ export default async function Page({
 
   if (!data) {
     return (
-      <h1 className="font-instrument text-center text-xl">
-        Event not found or it is no longer available
-      </h1>
+      <div className="flex h-dvh w-full items-center justify-center">
+        <h1 className="font-instrument text-center text-xl uppercase">
+          Event not found or it is no longer available
+        </h1>
+      </div>
     );
   }
 
   return (
-    <main className="flex min-h-screen flex-col px-8 pb-4 md:flex-row md:gap-8">
+    <main className="relative flex min-h-screen flex-col px-8 pb-4 md:flex-row md:gap-8">
       <div className="w-full pt-7 md:w-1/2">
         {showForm && (
           <div className="grid grid-cols-[auto_1fr] items-center gap-4">
@@ -89,8 +92,10 @@ export default async function Page({
             )}
             <p className="font-instrument text-muted-foreground flex items-center gap-2 text-xs font-medium sm:text-sm md:text-base">
               <Video />
-              Web conferencing details provided upon <br />
-              confirmation.
+              <span>
+                Web conferencing details provided upon <br />
+                confirmation.
+              </span>
             </p>
           </div>
         </div>
@@ -112,8 +117,10 @@ export default async function Page({
             {showSlots && (
               <TimeTable
                 email={originalEmail}
-                duration={data?.duration as number}
+                duration={data?.duration ?? 0}
                 selectedDate={selectedDate}
+                showSlot={showSlots}
+                date={date}
               />
             )}
           </div>
@@ -124,7 +131,10 @@ export default async function Page({
           fromTime={time}
           eventTypeId={data.id}
           userEmail={data.user.email}
+          name={data.user.name}
+          duration={data.duration}
           participants={data.maxParticipants}
+          eventName={eventname}
         />
       )}
     </main>

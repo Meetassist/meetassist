@@ -1,10 +1,22 @@
-import Link from "next/link";
+import ChatSection from "@/components/landingpage/ChatSection";
+import FeaturesSection from "@/components/landingpage/FeaturesSection";
+import Footer from "@/components/landingpage/Footer";
+import HeroSection from "@/components/landingpage/HeroSection";
+import { MobileNavbar, Navbar } from "@/components/landingpage/Navbar";
+import SmartSection from "@/components/landingpage/SmartSection";
+import TimeSection from "@/components/landingpage/TimeSection";
+
 export default async function Home() {
   return (
-    <div className="bg-secondary h-dvh w-full">
-      <h1>Hello</h1>
-      <Link href={"/dashboard"}>dashboard home</Link>
-      <Link href={"/login"}>Login</Link>
-    </div>
+    <main className="">
+      <Navbar />
+      <MobileNavbar />
+      <HeroSection />
+      <TimeSection />
+      <ChatSection />
+      <FeaturesSection />
+      <SmartSection />
+      <Footer />
+    </main>
   );
 }

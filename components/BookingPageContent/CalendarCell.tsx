@@ -42,11 +42,11 @@ export function CalendarCell({
         <div
           className={cn(
             "flex size-full cursor-pointer items-center justify-center rounded-full text-base font-normal",
-            isSelected ? "bg-primary font-semibold text-white" : "",
-            finallyIsDisabled ? "text-muted-foreground cursor-not-allowed" : "",
-            !isSelected && !finallyIsDisabled
-              ? "text-primary bg-[#F0EFFF]"
-              : "",
+            finallyIsDisabled
+              ? "text-muted-foreground cursor-not-allowed"
+              : isSelected
+                ? "bg-primary font-semibold text-white"
+                : "text-primary bg-[#F0EFFF]",
           )}
         >
           {formattedDate}
