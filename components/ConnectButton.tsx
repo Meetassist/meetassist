@@ -46,7 +46,7 @@ export function ConnectGoogleMeetButton({
       type="button"
       variant={variant}
       onClick={() => router.push("/api/auth")}
-      className={`font-instrument foreground cursor-pointer ${styles}`}
+      className={`font-instrument foreground cursor-pointer ${styles ?? ""}`}
     >
       {text}
       {Icon && <Icon />}

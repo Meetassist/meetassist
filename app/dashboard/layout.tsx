@@ -54,14 +54,9 @@ export const metadata: Metadata = {
   creator: "Meetassist",
   publisher: "Meetassist",
   icons: {
-    icon: [
-      { url: "/favicon.ico" },
-      { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
   manifest: "/site.webmanifest",
   openGraph: {
@@ -177,7 +172,7 @@ export default async function RootLayout({
             </div>
             <Avatar>
               <AvatarImage
-                src={image || "/image.png"}
+                src={image || "/noImage.png"}
                 alt={name || "User avatar"}
                 className="size-8"
               />

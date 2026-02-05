@@ -19,7 +19,7 @@ async function UserInfo() {
     <div className="flex items-center gap-2">
       <Avatar>
         <AvatarImage
-          src={session.user.image || "/image.png"}
+          src={session.user.image || "/noImage.png"}
           alt={session.user.name || "User avatar"}
           className="size-8"
         />
