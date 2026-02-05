@@ -10,14 +10,14 @@ import type { Route } from "next";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Calendar } from "./Calendar";
-type RenderCalenderProps = {
+type RenderCalendarProps = {
   availability: {
     day: string;
     isActive: boolean;
   }[];
 };
 
-export function RenderCalender({ availability }: RenderCalenderProps) {
+export function RenderCalendar({ availability }: RenderCalendarProps) {
   if (availability.length !== 7) {
     throw new Error("Availability array must contain exactly 7 days");
   }

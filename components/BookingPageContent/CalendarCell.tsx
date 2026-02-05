@@ -38,6 +38,9 @@ export function CalendarCell({
         disabled={finallyIsDisabled}
         ref={ref}
         className="group size-10 rounded-md border-0 bg-transparent p-0 outline-none sm:size-12"
+        style={
+          isFocusVisible ? { boxShadow: "0 0 0 2px var(--primary)" } : undefined
+        }
       >
         <div
           className={cn(

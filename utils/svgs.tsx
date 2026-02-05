@@ -626,18 +626,18 @@ export const Instagram = (props: SVGProps<SVGSVGElement>) => (
       </linearGradient>
       <linearGradient id="instagram_icon__c">
         <stop offset="0" stopColor="#780cff" />
-        <stop offset="1" stopColor="#820bff" stop-opacity="0" />
+        <stop offset="1" stopColor="#820bff" stopOpacity="0" />
       </linearGradient>
       <linearGradient id="instagram_icon__b">
         <stop offset="0" stopColor="#fc0" />
-        <stop offset="1" stopColor="#fc0" stop-opacity="0" />
+        <stop offset="1" stopColor="#fc0" stopOpacity="0" />
       </linearGradient>
       <linearGradient id="instagram_icon__a">
         <stop offset="0" stopColor="#fc0" />
         <stop offset=".124" stopColor="#fc0" />
         <stop offset=".567" stopColor="#fe4a05" />
         <stop offset=".694" stopColor="#ff0f3f" />
-        <stop offset="1" stopColor="#fe0657" stop-opacity="0" />
+        <stop offset="1" stopColor="#fe0657" stopOpacity="0" />
       </linearGradient>
     </defs>
     <path

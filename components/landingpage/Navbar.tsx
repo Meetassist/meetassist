@@ -151,9 +151,18 @@ export function MobileNavbar() {
                 </div>
               )}
             </li>
-
-            <li>Join Our Community</li>
-            <li>Contact us</li>
+            <li>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://t.me/meetassist"
+              >
+                Join Our Community
+              </a>
+            </li>
+            <li>
+              <a href="mailto:Meetassist.ai@gmail.com">Contact us</a>
+            </li>
           </ul>
         </div>
       )}

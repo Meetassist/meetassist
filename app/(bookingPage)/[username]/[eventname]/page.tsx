@@ -1,5 +1,5 @@
 import { BookingForm } from "@/components/BookingPageContent/BookingForm";
-import { RenderCalender } from "@/components/BookingPageContent/RenderCalendar";
+import { RenderCalendar } from "@/components/BookingPageContent/RenderCalendar";
 import { TimeTable } from "@/components/BookingPageContent/TimeTable";
 import { Button } from "@/components/ui/button";
 import { BookingPageData } from "@/lib/actions/bookingpageAction";
@@ -113,7 +113,7 @@ export default async function Page({
           </div>
 
           <div className={`${showSlots ? "flex items-center gap-5" : ""}`}>
-            <RenderCalender availability={data?.user.availabilities ?? []} />
+            <RenderCalendar availability={data?.user.availabilities ?? []} />
             {showSlots && (
               <TimeTable
                 email={originalEmail}

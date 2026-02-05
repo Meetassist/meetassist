@@ -178,10 +178,7 @@ export async function POST(req: NextRequest) {
 
             // Parse Summary & Call Gemini
             if (rawSummary) {
-              const summaryContent =
-                rawSummary.summary?.text ||
-                rawSummary.summary ||
-                rawSummary.text;
+              const summaryContent = rawSummary;
 
               if (summaryContent) {
                 updateData.summary = summaryContent;

@@ -55,7 +55,7 @@ export default function Footer() {
               <LinkedIn className="h-5 w-5" />
             </a>
             <a
-              href="https://instagram.com/meetassist"
+              href="https://www.instagram.com/meetassist.ai/?hl=en"
               aria-label="Instagram"
               target="_blank"
               rel="noopener noreferrer"
