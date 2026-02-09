@@ -1,7 +1,9 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { Button } from "./ui/button";
 import { type LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
 type ButtonConnect = {
   text: string;
   styles?: string;
@@ -21,16 +23,33 @@ export function ConnectMicrosoftButton({
   icon: Icon,
   variant = "ghost",
 }: ButtonConnect) {
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <Button
-      type="button"
+      asChild
       variant={variant}
-      onClick={() => router.push("/api/auth/microsoft")}
-      className={`font-instrument foreground cursor-pointer ${styles ?? ""}`}
+      disabled={isLoading}
+      className={`font-instrument foreground relative overflow-hidden ${styles}`}
     >
-      {text}
-      {Icon && <Icon />}
+      <Link
+        href="/api/auth/microsoft"
+        onClick={() => setIsLoading(true)}
+        className={isLoading ? "pointer-events-none" : ""}
+        prefetch={false}
+      >
+        {isLoading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-inherit">
+            <Spinner />
+          </div>
+        )}
+
+        <span
+          className={`flex items-center gap-2 transition-opacity ${isLoading ? "opacity-0" : "opacity-100"}`}
+        >
+          {text}
+          {Icon && <Icon />}
+        </span>
+      </Link>
     </Button>
   );
 }
@@ -40,16 +59,33 @@ export function ConnectGoogleMeetButton({
   styles,
   variant,
 }: ButtonConnect) {
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <Button
-      type="button"
+      asChild
       variant={variant}
-      onClick={() => router.push("/api/auth")}
-      className={`font-instrument foreground cursor-pointer ${styles ?? ""}`}
+      disabled={isLoading}
+      className={`font-instrument foreground relative overflow-hidden ${styles}`}
     >
-      {text}
-      {Icon && <Icon />}
+      <Link
+        href="/api/auth"
+        onClick={() => setIsLoading(true)}
+        className={isLoading ? "pointer-events-none" : ""}
+        prefetch={false}
+      >
+        {isLoading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-inherit">
+            <Spinner />
+          </div>
+        )}
+
+        <span
+          className={`flex items-center gap-2 transition-opacity ${isLoading ? "opacity-0" : "opacity-100"}`}
+        >
+          {text}
+          {Icon && <Icon />}
+        </span>
+      </Link>
     </Button>
   );
 }
@@ -60,16 +96,34 @@ export function ConnectZoomButton({
   styles,
   variant,
 }: ButtonConnect) {
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <Button
-      type="button"
+      asChild // This tells Shadcn to merge styles into the child (Link)
       variant={variant}
-      onClick={() => router.push("/api/auth/zoom")}
-      className={`font-instrument foreground cursor-pointer ${styles}`}
+      disabled={isLoading}
+      className={`font-instrument foreground relative overflow-hidden ${styles}`}
     >
-      {text}
-      {Icon && <Icon />}
+      <Link
+        href="/api/auth/zoom"
+        onClick={() => setIsLoading(true)}
+        className={isLoading ? "pointer-events-none" : ""}
+        prefetch={false}
+      >
+        {isLoading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-inherit">
+            <Spinner />
+          </div>
+        )}
+
+        <span
+          className={`flex items-center gap-2 transition-opacity ${isLoading ? "opacity-0" : "opacity-100"}`}
+        >
+          {text}
+          {Icon && <Icon />}
+        </span>
+      </Link>
     </Button>
   );
 }

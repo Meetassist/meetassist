@@ -64,11 +64,10 @@ export async function GET(req: NextRequest) {
         zoomGrantId: zoomGrantId,
       },
     });
-    console.log("Zoom OAuth successful for user:", session?.user?.id);
     redirect("/dashboard/sync");
   } catch (error) {
     cookieStore.delete("zoom_oauth_state");
     console.error("Zoom OAuth exchange failed:", error);
-    redirect("/login");
+    redirect("/dashboard");
   }
 }

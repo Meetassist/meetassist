@@ -18,29 +18,29 @@ import {
   parseISO,
 } from "date-fns";
 import { GetFreeBusyResponse, NylasResponse } from "nylas";
-interface GoogleConnection {
+type GoogleConnection = {
   googleGrantId: string;
   email: string;
-}
+};
 
-interface ZoomConnection {
+type ZoomConnection = {
   zoomGrantId?: string;
   email?: string;
-}
+};
 
-interface MicrosoftConnection {
+type MicrosoftConnection = {
   microsoftGrantId?: string;
   email?: string;
-}
+};
 
-interface ConnectionStatusResult {
+type ConnectionStatusResult = {
   isGoogleConnected: boolean;
   googleConnection: GoogleConnection | null;
   isZoomConnected: boolean;
   zoomConnection: ZoomConnection | null;
   isMicrosoftConnected: boolean;
   microsoftConnection: MicrosoftConnection | null;
-}
+};
 //Parse time to 12 hours to allow the TimeFieldInput from react spectrum can use a 24hours to be able to use it, since it
 export function parseTimeString(timeStr: string) {
   const timeWithSeconds =

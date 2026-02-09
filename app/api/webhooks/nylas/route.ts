@@ -1,19 +1,19 @@
-interface TranscriptSegment {
+type TranscriptSegment = {
   speaker?: string;
   text?: string;
   content?: string;
   start_time?: number;
   end_time?: number;
-}
+};
 
-interface NylasMediaObject {
+type NylasMediaObject = {
   transcript?: string;
   summary?: string;
   recording?: string;
   action_items?: string;
-}
+};
 
-interface NylasNotetakerObject {
+type NylasNotetakerObject = {
   id: string;
   meeting_state?:
     | "attending"
@@ -22,23 +22,23 @@ interface NylasNotetakerObject {
     | "disconnected"
     | "api_request";
   media?: NylasMediaObject;
-}
+};
 
-interface NylasWebhookPayload {
+type NylasWebhookPayload = {
   type: string;
   data: {
     object: NylasNotetakerObject;
   };
   challenge?: string;
-}
+};
 
-interface MeetingRecordingUpdate {
+type MeetingRecordingUpdate = {
   transcriptText?: string;
   summary?: string;
   actionItems?: string[];
   status?: RecordingStatus;
   meetingName?: string;
-}
+};
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
