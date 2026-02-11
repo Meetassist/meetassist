@@ -41,7 +41,7 @@ export default async function Page({
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col px-8 pb-4 md:flex-row md:gap-8">
+    <main className="relative flex min-h-screen flex-col px-4 pb-4 md:flex-row md:gap-8 md:px-8">
       <div className="w-full pt-7 md:w-1/2">
         {showForm && (
           <div className="grid grid-cols-[auto_1fr] items-center gap-4">
@@ -105,13 +105,12 @@ export default async function Page({
       <div className="border-border my-6 hidden self-stretch border-l md:block" />
 
       {!showForm ? (
-        <div className="mt-8 w-full px-10 pb-5 pl-0 md:w-1/2">
+        <div className="mt-4 w-full px-10 pb-5 pl-0 md:mt-8 md:w-1/2">
           <div className="space-y-6">
             <h2 className="font-instrument text-xl font-medium">
               Select Date & Time
             </h2>
           </div>
-
           <div className={`${showSlots ? "flex items-center gap-5" : ""}`}>
             <RenderCalendar availability={data?.user.availabilities ?? []} />
             {showSlots && (

@@ -17,7 +17,7 @@ const getCurrentUnixTime = () => Math.floor(Date.now() / 1000);
 
 type CalendarProvider = "google" | "microsoft";
 
-interface EventWithProvider {
+type EventWithProvider = {
   id: string;
   title?: string;
   provider?: CalendarProvider;
@@ -32,12 +32,12 @@ interface EventWithProvider {
     };
   };
   htmlLink?: string;
-}
+};
 
-interface FetchResult {
+type FetchResult = {
   provider: CalendarProvider;
   events: EventWithProvider[];
-}
+};
 async function Meeting() {
   const session = await getUserSession();
   if (!session?.user) {
@@ -71,7 +71,7 @@ async function Meeting() {
   if (!hasGoogleConnected && !hasMicrosoftConnected) {
     return (
       <div className="mt-8 w-full">
-        <p className="text-muted-foreground font-inter text-2xl">
+        <p className="text-muted-foreground font-inter text-base md:text-xl">
           Connect your calendar to view upcoming meetings.
         </p>
       </div>
@@ -155,7 +155,7 @@ async function Meeting() {
   if (upcomingMeetings.length === 0) {
     return (
       <div className="mt-8 w-full pb-4">
-        <p className="text-muted-foreground font-inter mt-4 text-2xl">
+        <p className="text-muted-foreground font-inter mt-4 text-base md:text-xl">
           You do not have an upcoming meeting yet
         </p>
       </div>

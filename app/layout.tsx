@@ -27,7 +27,7 @@ const inter = Inter({
 
 const siteConfig = {
   name: "Meetassist",
-  url: "",
+  url: "https://meetassistai.vercel.app",
   ogImage:
     "https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcDHS8PhSZhqGg0oZln3RVB2YUcPierfmHvwp4",
   description:
@@ -47,7 +47,7 @@ const siteConfig = {
 };
 
 export const metadata: Metadata = {
-  // metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
     template: "%s | Meetassist",

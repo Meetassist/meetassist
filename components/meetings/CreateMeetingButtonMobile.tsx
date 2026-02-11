@@ -48,6 +48,7 @@ type TCreateMeeting = {
   isGoogleConnected: boolean;
   isMicrosoftConnected: boolean;
   isZoomConnected: boolean;
+  button?: boolean;
 };
 
 export default function CreateMeeting({
@@ -55,6 +56,7 @@ export default function CreateMeeting({
   isGoogleConnected,
   isMicrosoftConnected,
   isZoomConnected,
+  button,
 }: TCreateMeeting) {
   const splitdays = days.map((item) => item.day.slice(0, 3)).join(", ");
   const [participants, setParticipants] = useState<number>(0);
@@ -142,7 +144,7 @@ export default function CreateMeeting({
     reset();
   };
   return (
-    <div className="mt-4">
+    <div className={`${button ? "" : "mt-4"}`}>
       <Dialog
         open={isOpen}
         onOpenChange={(open) => {
@@ -151,13 +153,22 @@ export default function CreateMeeting({
         }}
       >
         <DialogTrigger asChild>
-          <Button className="font-instrument mt-4 w-full cursor-pointer rounded-full py-7 text-base font-medium text-white">
-            <Plus />
-            Create
-          </Button>
+          {!button ? (
+            <Button className="font-instrument mt-4 w-full cursor-pointer rounded-full py-7 text-base font-medium text-white">
+              <Plus />
+              Create
+            </Button>
+          ) : (
+            <p className="text-muted-foreground font-inter text-sm md:text-xl">
+              You have not created a meeting Link yet,{" "}
+              <button className="text-primary font-inter cursor-pointer text-sm md:text-xl">
+                click here
+              </button>{" "}
+              to get started.
+            </p>
+          )}
         </DialogTrigger>
 
-        {/* Show meeting details form after selecting type */}
         {participants === 1 || participants === 2 ? (
           <DialogContent
             className="max-h-[90vh] min-h-[550px] overflow-y-auto rounded-sm px-4 sm:max-w-[650px] sm:px-6"

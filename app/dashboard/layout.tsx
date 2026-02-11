@@ -14,8 +14,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 const siteConfig = {
   name: "Meetassist",
-  url: "",
-  //  url: process.env.NEXT_PUBLIC_APP_URL || "https://meetassist.com",
+  url: "https://meetassistai.vercel.app",
   ogImage:
     "https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcDHS8PhSZhqGg0oZln3RVB2YUcPierfmHvwp4",
   description:
@@ -36,7 +35,7 @@ const siteConfig = {
 };
 
 export const metadata: Metadata = {
-  // metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
     template: "%s | Meetassist",
@@ -158,7 +157,7 @@ export default async function RootLayout({
           isZoomConnected={isZoomConnected}
         />
         <SidebarInset>
-          <header className="flex items-center justify-between px-6 pt-5 pb-2 md:hidden">
+          <header className="flex items-center justify-between px-4 pt-5 pb-2 md:hidden">
             <div className="flex items-center">
               <SidebarTrigger />
               <Image

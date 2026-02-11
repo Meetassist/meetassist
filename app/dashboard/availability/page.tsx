@@ -40,7 +40,7 @@ async function AvailabilityContent() {
 }
 export default function Page() {
   return (
-    <section className="overflow-x-hidden px-6 py-5">
+    <section className="overflow-x-hidden px-4 py-5 md:px-6">
       <div>
         <h1 className="font-instrument text-3xl font-medium">Availability</h1>
         <p className="font-instrument text-muted-foreground mt-2 text-xs font-medium sm:text-base">

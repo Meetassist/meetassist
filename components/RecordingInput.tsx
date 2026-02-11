@@ -99,7 +99,7 @@ export function RecordingInput() {
           className="object-cover"
         />
 
-        <div className="relative z-10 p-8">
+        <div className="relative z-10 p-8 px-4">
           <h1 className="font-inter mb-2 text-lg font-semibold text-white">
             Record a live Meeting
           </h1>

@@ -180,7 +180,7 @@ export default async function Page({
   searchParams: Promise<{ id?: string }>;
 }) {
   return (
-    <section className="px-6 pb-4">
+    <section className="px-4 pb-4 md:px-6">
       <header className="hidden py-5 md:block">
         <InputGroup className="max-w-[500px] rounded-lg py-5">
           <InputGroupInput

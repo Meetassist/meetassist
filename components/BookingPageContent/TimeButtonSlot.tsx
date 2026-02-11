@@ -48,18 +48,17 @@ export function TimeButtonSlot({
                     >
                       {selectedSlot}
                     </Button>
-                    <Link
-                      href={`?date=${format(selectedDate, "yyyy-MM-dd")}&time=${encodeURIComponent(selectedSlot)}`}
-                      className="flex-1"
+                    <Button
+                      asChild
+                      className="bg-primary w-full flex-1 cursor-pointer py-5 text-base font-medium text-white"
+                      size="lg"
                     >
-                      <Button
-                        asChild
-                        className="w-full cursor-pointer py-5 text-base font-medium text-white"
-                        size="lg"
+                      <Link
+                        href={`?date=${format(selectedDate, "yyyy-MM-dd")}&time=${encodeURIComponent(selectedSlot)}`}
                       >
                         Next
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </div>
                 )}
               </Fragment>

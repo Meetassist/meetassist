@@ -8,6 +8,7 @@ import { CopyMeetingLink } from "./CopyMeetingLink";
 import { MeetingButton } from "./MeetingButton";
 import { redirect } from "next/navigation";
 import { getAllConnectionStatuses } from "@/utils/helper";
+import CreateMeeting from "./CreateMeetingButtonMobile";
 
 async function DataForMeeting() {
   const data = await MeetingsData();
@@ -31,10 +32,20 @@ async function DataForMeeting() {
     "Sunday",
   ];
 
+  const sortedDays = days.sort((a, b) => {
+    const aIndex = dayOrder.indexOf(a.day);
+    const bIndex = dayOrder.indexOf(b.day);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+  const { isGoogleConnected, isMicrosoftConnected, isZoomConnected } =
+    await getAllConnectionStatuses();
+
   const baseUrl = process.env.NEXT_PUBLIC_URL;
   if (!baseUrl) {
     return (
-      <div className="p-4 text-red-500">
+      <div className="p-4 text-xs text-red-500">
         Configuration error: Base URL is not configured. Please contact support.
       </div>
     );
@@ -43,23 +54,16 @@ async function DataForMeeting() {
   if (data.length === 0) {
     return (
       <div className="mt-8 w-full pb-4">
-        <p className="text-muted-foreground font-inter mt-4 text-2xl">
-          You have not created a meeting Link yet, create one to get started.
-        </p>
+        <CreateMeeting
+          isGoogleConnected={isGoogleConnected}
+          isMicrosoftConnected={isMicrosoftConnected}
+          isZoomConnected={isZoomConnected}
+          days={sortedDays}
+          button={true}
+        />
       </div>
     );
   }
-
-  const sortedDays = days.sort((a, b) => {
-    const aIndex = dayOrder.indexOf(a.day);
-    const bIndex = dayOrder.indexOf(b.day);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
-    return aIndex - bIndex;
-  });
-
-  const { isGoogleConnected, isMicrosoftConnected, isZoomConnected } =
-    await getAllConnectionStatuses();
 
   return (
     <>

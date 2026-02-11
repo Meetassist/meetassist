@@ -46,7 +46,7 @@ export default async function Page() {
     zoomConnection,
   } = connectionStatuses;
   return (
-    <section className="mt-10 px-6">
+    <section className="mt-10 px-4 md:px-6">
       <div>
         <h1 className="font-instrument text-foreground text-[32px] font-medium">
           Sync

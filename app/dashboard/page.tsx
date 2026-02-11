@@ -4,7 +4,6 @@ import CreateMeeting from "@/components/meetings/CreateMeetingButtonMobile";
 import { Meetings } from "@/components/meetings/Meetings";
 import { UpcomingMeeting } from "@/components/meetings/UpcomingEvent";
 import { RecordingInput } from "@/components/RecordingInput";
-
 import { getUserSession } from "@/lib/getSession";
 import db from "@/lib/prisma";
 import { getAllConnectionStatuses } from "@/utils/helper";
@@ -46,7 +45,7 @@ export default async function Page() {
   return (
     <>
       <Header />
-      <section className="mt-1 px-6">
+      <section className="mt-1 px-4 md:px-6">
         <RecordingInput />
         <div className="mt-4 block max-w-[200px] pb-4 md:hidden">
           <h1 className="font-inter text-xl font-medium">Schedule Meeting</h1>
@@ -55,6 +54,7 @@ export default async function Page() {
             isMicrosoftConnected={isMicrosoftConnected}
             isZoomConnected={isZoomConnected}
             days={sortedDays}
+            button={false}
           />
         </div>
         <div className="mt-6">

@@ -28,7 +28,6 @@ export function CalenderHeader({
   const year = parts.find((part) => part.type === "year")?.value ?? "";
   return (
     <div className="flex items-center justify-between pt-4">
-      {" "}
       <VisuallyHidden>
         <h2>{calendarProps["aria-label"]}</h2>
       </VisuallyHidden>
