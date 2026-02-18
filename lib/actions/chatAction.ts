@@ -42,11 +42,11 @@ export async function RecordedMeetingList() {
 }
 
 export async function RecordedMeetingDetail(activeId: string | undefined) {
+  const session = await getUserSession();
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
   try {
-    const session = await getUserSession();
-    if (!session?.user?.id) {
-      throw new Error("Unauthorized");
-    }
     let recordingData: Recordings = null;
     if (activeId) {
       recordingData = await db.meetingRecording.findFirst({
@@ -100,7 +100,7 @@ export async function UpdateRecordingName(rawData: TRenameMeetingSchema) {
 
     const { id, RecordingName } = validatedData.data;
     if (!id) {
-      throw new Error("Id is required");
+      return { success: false, error: "Id is required" };
     }
     await db.meetingRecording.update({
       where: {

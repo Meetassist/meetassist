@@ -152,8 +152,6 @@ export async function CreateBooking(data: TBookingFormSchema) {
         microsoftEmail: true,
         microsoftCalendarId: true,
         zoomGrantId: true,
-        email: true,
-        name: true,
       },
     });
 
@@ -189,7 +187,7 @@ export async function CreateBooking(data: TBookingFormSchema) {
         status: "yes" as const,
       },
       ...(validatedData.guestEmails || []).map((email) => ({
-        name: email,
+        name: email.split("@")[0],
         email: email,
         status: "noreply" as const,
       })),

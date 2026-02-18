@@ -64,6 +64,8 @@ export function RecordingMenuButton({
         toast.success("Recording deleted");
         setIsAlertOpen(false);
         setIsDropdownOpen(false);
+      } else {
+        toast.error("Failed to delete recording");
       }
     } catch (error) {
       console.error("Delete failed:", error);

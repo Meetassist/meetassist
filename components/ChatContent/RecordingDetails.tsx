@@ -17,10 +17,15 @@ export async function RecordingDetails({
   searchParams: Promise<{ id?: string }>;
 }) {
   const { id: activeId } = await searchParams;
-  const recordingData = await RecordedMeetingDetail(activeId);
+  let recordingData = null;
+  try {
+    recordingData = await RecordedMeetingDetail(activeId);
+  } catch (error) {
+    console.error("Failed to fetch recording details:", error);
+  }
   return (
     <>
-      {recordingData === null ? (
+      {!recordingData ? (
         <div className="md:border-border w-full flex-1 pr-3 md:border-r">
           <div className="flex h-[380px] w-full flex-col items-center justify-center gap-4">
             <Image src={ChatState} alt="Meetassist Chat empty state" />
