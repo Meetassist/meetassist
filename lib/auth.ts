@@ -75,37 +75,37 @@ export const auth = betterAuth({
                 {
                   day: "Sunday",
                   fromTime: "09:00",
-                  toTime: "18:00",
+                  toTime: "17:00",
                   userId: user.id,
                 },
                 {
                   day: "Monday",
                   fromTime: "09:00",
-                  toTime: "18:00",
+                  toTime: "17:00",
                   userId: user.id,
                 },
                 {
                   day: "Tuesday",
                   fromTime: "09:00",
-                  toTime: "18:00",
+                  toTime: "17:00",
                   userId: user.id,
                 },
                 {
                   day: "Wednesday",
                   fromTime: "09:00",
-                  toTime: "18:00",
+                  toTime: "17:00",
                   userId: user.id,
                 },
                 {
                   day: "Thursday",
                   fromTime: "09:00",
-                  toTime: "18:00",
+                  toTime: "17:00",
                   userId: user.id,
                 },
                 {
                   day: "Friday",
                   fromTime: "09:00",
-                  toTime: "18:00",
+                  toTime: "17:00",
                   userId: user.id,
                 },
                 {

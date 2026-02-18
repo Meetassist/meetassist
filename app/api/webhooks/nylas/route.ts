@@ -1,9 +1,6 @@
 type TranscriptSegment = {
   speaker?: string;
   text?: string;
-  content?: string;
-  start_time?: number;
-  end_time?: number;
 };
 
 type NylasMediaObject = {
@@ -11,6 +8,7 @@ type NylasMediaObject = {
   summary?: string;
   recording?: string;
   action_items?: string;
+  recording_duration?: string;
 };
 
 type NylasNotetakerObject = {
@@ -40,17 +38,21 @@ type MeetingRecordingUpdate = {
   meetingName?: string;
 };
 
-import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
-import db from "@/lib/prisma";
+import MeetingSummaryEmail from "@/components/Emails/MeetingSummaryEmail";
 import { RecordingStatus } from "@/lib/generated/prisma/enums";
-import { generateMeetingName } from "@/utils/helper";
+import db from "@/lib/prisma";
+import { formatDate, generateMeetingName, truncateWords } from "@/utils/helper";
+import { render } from "@react-email/render";
 import { waitUntil } from "@vercel/functions";
+import crypto from "crypto";
+import { NextRequest, NextResponse } from "next/server";
+import React from "react";
+import { Resend } from "resend";
 const WEBHOOK_SECRET = process.env.NYLAS_WEBHOOK_SECRET;
-
+const resend = new Resend(process.env.RESEND_API_KEY);
+const baseUrl = process.env.NEXT_PUBLIC_URL || "";
 async function fetchJson(url: string | undefined, type: string) {
   if (!url) return null;
-
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
     if (!res.ok) {
@@ -94,7 +96,6 @@ export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
 
-    // 1. Validate Security Immediately
     if (!(await isValidSignature(req, rawBody))) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -112,7 +113,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No ID" }, { status: 400 });
     }
 
-    // 2. Handle simple state updates (Fast enough to keep in-line)
     if (type === "notetaker.updated" || type === "notetaker.meeting_state") {
       const state = data.object.meeting_state;
       const statusMap: Record<string, RecordingStatus> = {
@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
         left_meeting: RecordingStatus.PROCESSING,
         disconnected: RecordingStatus.PROCESSING,
         error: RecordingStatus.FAILED,
-        api_request: RecordingStatus.RECORDING,
+        api_request: RecordingStatus.PROCESSING,
       };
 
       if (state && statusMap[state]) {
@@ -132,15 +132,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: "ok" });
     }
 
-    // 3. Handle Media Processing in the Background
     if (type === "notetaker.media") {
       const media = data.object.media;
 
-      // START BACKGROUND TASK
       waitUntil(
         (async () => {
           try {
-            // Fetch everything from Nylas URLs
             const [rawTranscript, rawSummary, rawActions] = await Promise.all([
               fetchJson(media?.transcript, "Transcript"),
               fetchJson(media?.summary, "Summary"),
@@ -169,43 +166,84 @@ export async function POST(req: NextRequest) {
               }
             }
 
-            // Parse Action Items
             if (rawActions) {
               updateData.actionItems = Array.isArray(rawActions)
                 ? rawActions
-                : rawActions.action_items || [];
+                : [];
             }
 
-            // Parse Summary & Call Gemini
             if (rawSummary) {
-              const summaryContent = rawSummary;
-
-              if (summaryContent) {
+              const summaryContent =
+                rawSummary?.summary ||
+                (typeof rawSummary === "string" ? rawSummary : null);
+              if (summaryContent && summaryContent.trim()) {
                 updateData.summary = summaryContent;
                 updateData.status = RecordingStatus.COMPLETED;
 
-                // Only generate name if it's still generic
                 const current = await db.meetingRecording.findUnique({
                   where: { notetakerId },
-                  select: { meetingName: true },
+                  select: {
+                    meetingName: true,
+                    createdAt: true,
+                    notetakerId: true,
+                    user: { select: { email: true } },
+                  },
                 });
 
                 if (
                   current?.meetingName === "Untitled Meeting" ||
                   !current?.meetingName
                 ) {
-                  const aiTitle = await generateMeetingName(summaryContent);
+                  const aiTitle = await generateMeetingName(
+                    summaryContent.trim(),
+                  );
                   if (aiTitle) updateData.meetingName = aiTitle;
+                } else {
+                  console.error(
+                    "Unexpected summary format from Nylas:",
+                    typeof rawSummary,
+                    rawSummary,
+                  );
                 }
               }
             }
 
-            // Final DB Update
             if (Object.keys(updateData).length > 0) {
-              await db.meetingRecording.update({
+              const updateRecord = await db.meetingRecording.update({
                 where: { notetakerId },
                 data: updateData,
+                include: { user: { select: { email: true } } },
               });
+
+              if (updateRecord?.user?.email) {
+                const formattedDate = formatDate(updateRecord.createdAt);
+                try {
+                  const emailHtml = await render(
+                    React.createElement(MeetingSummaryEmail, {
+                      meetingTitle: updateRecord.meetingName || "Your Meeting",
+                      dateSent: formattedDate,
+                      summary: truncateWords(updateRecord.summary || "", 150),
+                      baseUrl: baseUrl,
+                      actionItems:
+                        (updateRecord.actionItems as string[])?.slice(0, 3) ||
+                        [],
+                      meetingId: updateRecord.notetakerId,
+                      image: `https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcJBGBgyn3kOTCG0vYAsNHbhWcmozPJ8Vit4qw`,
+                    }),
+                  );
+                  await resend.emails.send({
+                    from: "Meetassist <onboarding@resend.dev>",
+                    to: updateRecord.user.email,
+                    subject: `Meeting Summary for ${updateRecord.meetingName ?? "Your Meeting"}`,
+                    html: emailHtml,
+                  });
+                } catch (emailError) {
+                  console.error(
+                    `Failed to send email for ${notetakerId}:`,
+                    emailError,
+                  );
+                }
+              }
             }
           } catch (bgError) {
             console.error(`[Background Error] for ${notetakerId}:`, bgError);
@@ -213,7 +251,6 @@ export async function POST(req: NextRequest) {
         })(),
       );
 
-      // Return immediately so Nylas doesn't timeout
       return NextResponse.json({ status: "processing_started" });
     }
 

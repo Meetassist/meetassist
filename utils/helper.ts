@@ -213,7 +213,7 @@ export const displayDate = (input: string | Date) => {
 
 let model: ReturnType<GoogleGenerativeAI["getGenerativeModel"]> | null = null;
 
-function getModel() {
+export function getModel() {
   if (!model) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -258,4 +258,23 @@ function generateFallback(summary: string): string {
     summary.split(/[.!?]/)[0].split(/\s+/).slice(0, 3).join(" ") ||
     "Meeting Recording"
   );
+}
+
+export function truncateWords(str: string, count: number) {
+  const words = str.split(/\s+/).filter(Boolean);
+  if (words.length <= count) return str;
+  return words.slice(0, count).join(" ") + "...";
+}
+export function formatDate(date: Date | string) {
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return "Invalid date";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+    .format(d)
+    .replace(" at ", ", ");
 }

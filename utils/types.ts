@@ -69,6 +69,12 @@ export const BookingFormSchema = z.object({
 export const RecordingInputSchema = z.object({
   meetingUrl: z.url("Enter a valid MeetingUrl"),
 });
+export const RenameMeetingSchema = z.object({
+  id: z.string().nullable(),
+  RecordingName: z.string("Enter a name for this meeting").nullable(),
+});
+
+export type TRenameMeetingSchema = z.infer<typeof RenameMeetingSchema>;
 export type TRecordingInputSchema = z.infer<typeof RecordingInputSchema>;
 export type TBookingFormSchema = z.infer<typeof BookingFormSchema>;
 export type TCreateMeetingSchema = z.infer<typeof CreateMeetingSchema>;

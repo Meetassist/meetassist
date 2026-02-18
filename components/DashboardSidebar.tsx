@@ -3,6 +3,7 @@ import * as React from "react";
 import { Logo } from "@/components/Logo";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
+import { RecordingButtonSidebar } from "@/components/ChatContent/RecordingButtonSidebar";
 import {
   Sidebar,
   SidebarContent,
@@ -45,6 +46,7 @@ export function DashboardSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
+        <RecordingButtonSidebar />
       </SidebarContent>
       <SidebarFooter>
         <NavUser name={name} email={email} image={image} />

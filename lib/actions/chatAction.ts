@@ -1,7 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getUserSession } from "../getSession";
 import db from "../prisma";
+import { RenameMeetingSchema, TRenameMeetingSchema } from "@/utils/types";
 
 type Recordings = {
   summary: string | null;
@@ -64,5 +66,56 @@ export async function RecordedMeetingDetail(activeId: string | undefined) {
     return recordingData;
   } catch (error) {
     throw error;
+  }
+}
+
+export async function DeleteRecording(id: string) {
+  try {
+    const session = await getUserSession();
+    if (!session?.user?.id) {
+      throw new Error("Unauthorized");
+    }
+    await db.meetingRecording.delete({
+      where: { userId: session.user.id, notetakerId: id },
+    });
+    revalidatePath("/dashboard/chats");
+    return { success: true };
+  } catch (error) {
+    console.error("Delete failed:", error);
+    return { success: false, error: "Failed to delete recording" };
+  }
+}
+
+export async function UpdateRecordingName(rawData: TRenameMeetingSchema) {
+  try {
+    const session = await getUserSession();
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const validatedData = RenameMeetingSchema.safeParse(rawData);
+    if (!validatedData.success) {
+      return { success: false, error: "Invalid data" };
+    }
+
+    const { id, RecordingName } = validatedData.data;
+    if (!id) {
+      throw new Error("Id is required");
+    }
+    await db.meetingRecording.update({
+      where: {
+        notetakerId: id,
+        userId: session.user.id,
+      },
+      data: {
+        meetingName: RecordingName,
+      },
+    });
+
+    revalidatePath("/dashboard/chats");
+    return { success: true };
+  } catch (error) {
+    console.error("Update failed:", error);
+    return { success: false, error: "Internal Server Error" };
   }
 }

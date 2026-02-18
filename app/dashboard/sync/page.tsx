@@ -14,7 +14,7 @@ import { getAllConnectionStatuses } from "@/utils/helper";
 import { Google, MicrosoftTeams, Zoom } from "@/utils/svgs";
 import { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Sync Integrations | Meetassist",
+  title: "Sync Integrations",
   description: "Sync your calendar, contacts, and meeting platforms",
   robots: {
     index: false,

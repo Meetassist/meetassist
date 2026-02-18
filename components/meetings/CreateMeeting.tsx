@@ -143,7 +143,7 @@ export default function CreateMeeting({
     reset();
   };
   return (
-    <div className="mt-4">
+    <div className="mt-4 hidden md:block">
       <Dialog
         open={isOpen}
         onOpenChange={(open) => {
@@ -458,7 +458,6 @@ export default function CreateMeeting({
                 </CardContent>
               </Card>
 
-              {/* Group Option */}
               <Card
                 className="cursor-pointer"
                 role="button"

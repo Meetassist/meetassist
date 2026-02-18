@@ -24,14 +24,14 @@ const NAV_LINKS = [
 export function NavMain() {
   const pathname = usePathname();
   return (
-    <SidebarGroup className="mt-[30px] px-3">
+    <SidebarGroup className="px-3 md:mt-[30px]">
       <SidebarMenu className="space-y-2">
         {NAV_LINKS.map((link) => (
           <Link
             key={link.name}
             href={{ pathname: link.href }}
             className={cn(
-              `flex items-center gap-2 rounded-lg px-4 py-2.5 text-base font-medium transition-all ease-in-out ${pathname === link.href ? "text-primary bg-[#F2F1FF]" : "hover:bg-muted-foreground/15"}`,
+              `flex items-center gap-2 rounded-lg px-4 py-1.5 text-base font-medium transition-all ease-in-out md:py-2.5 ${pathname === link.href ? "text-primary bg-[#F2F1FF]" : "hover:bg-muted-foreground/15"}`,
             )}
           >
             {link.icon && (

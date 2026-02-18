@@ -100,10 +100,10 @@ export function RecordingInput() {
         />
 
         <div className="relative z-10 p-8 px-4">
-          <h1 className="font-inter mb-2 text-lg font-semibold text-white">
+          <h1 className="font-inter mb-2 text-base font-semibold text-white">
             Record a live Meeting
           </h1>
-          <p className="text-muted-foreground font-inter text-sm tracking-tighter">
+          <p className="text-muted-foreground font-inter text-xs tracking-tighter">
             Works with Zoom, Google Meet, or Microsoft Teams
           </p>
           <div className="mt-8">
@@ -141,7 +141,7 @@ function MeetingUrlForm({
               <InputGroupInput
                 {...field}
                 placeholder="Paste meeting URL to add MeetAssist"
-                className="rounded-2xl text-white"
+                className="rounded-2xl text-xs text-white sm:text-sm placeholder:md:text-base"
                 id={field.name}
                 aria-invalid={fieldState.invalid}
                 aria-describedby={
@@ -153,7 +153,7 @@ function MeetingUrlForm({
                 <InputGroupButton
                   type="submit"
                   variant="secondary"
-                  className="font-inter w-[150px] cursor-pointer rounded-3xl px-3 py-5 text-sm font-normal"
+                  className="font-inter w-[150px] cursor-pointer rounded-3xl px-3 py-5 text-xs font-normal sm:text-sm"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? <Spinner /> : "Record meeting"}
@@ -163,7 +163,7 @@ function MeetingUrlForm({
             {fieldState.error && (
               <span
                 id={`${field.name}-error`}
-                className="text-destructive mt-1 text-sm"
+                className="text-destructive mt-1 text-xs sm:text-sm"
                 role="alert"
               >
                 {fieldState.error.message}

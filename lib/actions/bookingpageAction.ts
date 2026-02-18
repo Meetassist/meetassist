@@ -2,6 +2,7 @@
 
 import { BookingFormSchema, TBookingFormSchema } from "@/utils/types";
 import { format } from "date-fns";
+import { enUS } from "date-fns/locale";
 import { DAY } from "../generated/prisma/enums";
 import { nylas } from "../nylas";
 import db from "../prisma";
@@ -52,7 +53,7 @@ export async function BookingPageData(
 }
 
 export async function GetTimeTableData(email: string, selectedDate: Date) {
-  const currentDay = format(selectedDate, "EEEE") as DAY;
+  const currentDay = format(selectedDate, "EEEE", { locale: enUS }) as DAY;
   const startOfday = new Date(selectedDate);
   startOfday.setHours(0, 0, 0, 0);
   const endofDay = new Date(selectedDate);
@@ -151,6 +152,8 @@ export async function CreateBooking(data: TBookingFormSchema) {
         microsoftEmail: true,
         microsoftCalendarId: true,
         zoomGrantId: true,
+        email: true,
+        name: true,
       },
     });
 
@@ -186,6 +189,7 @@ export async function CreateBooking(data: TBookingFormSchema) {
         status: "yes" as const,
       },
       ...(validatedData.guestEmails || []).map((email) => ({
+        name: email,
         email: email,
         status: "noreply" as const,
       })),
