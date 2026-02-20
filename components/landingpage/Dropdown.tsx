@@ -110,7 +110,7 @@ export function NavDropMenu() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <a href="mailto:Meetassist.ai@gmail.com">Contact us</a>
+            <a href="mailto:support@meetassist.cc">Contact us</a>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

@@ -161,7 +161,7 @@ export function MobileNavbar() {
               </a>
             </li>
             <li>
-              <a href="mailto:Meetassist.ai@gmail.com">Contact us</a>
+              <a href="mailto:support@meetassist.cc">Contact us</a>
             </li>
           </ul>
         </div>
