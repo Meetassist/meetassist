@@ -60,7 +60,6 @@ export function MobileNavbar() {
   const [openNav, setOpenNav] = useState<boolean>(false);
   const [isIntegrationOpen, setIsIntegrationOpen] = useState<boolean>(false);
 
-  // Body scroll lock
   useEffect(() => {
     document.body.style.overflow = openNav ? "hidden" : "unset";
     return () => {
@@ -96,7 +95,11 @@ export function MobileNavbar() {
           </div>
 
           <ul className="mt-4 flex flex-col gap-5 text-xl font-medium">
-            <li>Products</li>
+            <li>
+              <a href="#product" onClick={() => setOpenNav(false)}>
+                Products
+              </a>
+            </li>
 
             <li className="flex flex-col">
               <button
@@ -142,6 +145,7 @@ export function MobileNavbar() {
                       </h2>
                       <Link
                         href="/login"
+                        onClick={() => setOpenNav(false)}
                         className="text-primary mt-1 flex items-center gap-2 text-sm font-medium hover:underline"
                       >
                         Browse Integrations <ArrowRight size={14} />

@@ -29,7 +29,7 @@ export async function RecordingDetails({
         <div className="md:border-border w-full flex-1 pr-3 md:border-r">
           <div className="flex h-[380px] w-full flex-col items-center justify-center gap-4">
             <Image src={ChatState} alt="Meetassist Chat empty state" />
-            <h3 className="text-muted-foreground px-4 text-base font-semibold tracking-wider uppercase">
+            <h3 className="text-muted-foreground px-4 text-sm font-semibold tracking-wider uppercase md:text-base">
               {activeId
                 ? "Recording not found"
                 : "Select a recording from the sidebar"}
@@ -42,7 +42,7 @@ export async function RecordingDetails({
             Summary of {recordingData.meetingName ?? "Untitled meeting"}
           </h2>
           <div className="mt-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Avatar>
                 <AvatarImage
                   src="/meetassit.png"
@@ -50,13 +50,14 @@ export async function RecordingDetails({
                   className="size-10 object-cover"
                 />
               </Avatar>
-
               <span className="text-xl font-medium">Meetassist</span>
               <span className="font-instrument text-muted-foreground text-sm">
-                {displayDate(recordingData.updatedAt)}
+                {recordingData.updatedAt
+                  ? displayDate(recordingData.updatedAt)
+                  : "—"}
               </span>
             </div>
-            <div className="px-4 md:px-7">
+            <div className="px-3 md:px-7">
               <div>
                 <p className="font-instrument text-muted-foreground mt-4 max-w-full text-justify text-base font-medium md:max-w-[700px]">
                   {recordingData.summary ?? "No summary available"}

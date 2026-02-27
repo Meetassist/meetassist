@@ -55,7 +55,7 @@ export default async function Page({
                   aria-label="Go back to time selection"
                 >
                   <ArrowLeft className="size-8" />
-                </Button>{" "}
+                </Button>
               </Link>
             </div>
             <div className="flex justify-center">

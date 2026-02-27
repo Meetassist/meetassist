@@ -48,9 +48,14 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import React from "react";
 import { Resend } from "resend";
+
 const WEBHOOK_SECRET = process.env.NYLAS_WEBHOOK_SECRET;
 const resend = new Resend(process.env.RESEND_API_KEY);
 const baseUrl = process.env.NEXT_PUBLIC_URL || "";
+const EMAIL_FROM =
+  process.env.EMAIL_SENDER_NAME && process.env.EMAIL_SENDER_ADDRESS
+    ? `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`
+    : null;
 async function fetchJson(url: string | undefined, type: string) {
   if (!url) return null;
   try {
@@ -216,7 +221,7 @@ export async function POST(req: NextRequest) {
               });
 
               if (updateRecord?.user?.email) {
-                const formattedDate = formatDate(updateRecord.createdAt);
+                const formattedDate = formatDate(updateRecord.updatedAt);
                 try {
                   const emailHtml = await render(
                     React.createElement(MeetingSummaryEmail, {
@@ -231,22 +236,24 @@ export async function POST(req: NextRequest) {
                       image: `https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcJBGBgyn3kOTCG0vYAsNHbhWcmozPJ8Vit4qw`,
                     }),
                   );
+                  if (!EMAIL_FROM) {
+                    throw new Error(
+                      "EMAIL_SENDER_NAME or EMAIL_SENDER_ADDRESS is not configured",
+                    );
+                  }
                   await resend.emails.send({
-                    from: "Meetassist <onboarding@resend.dev>",
+                    from: EMAIL_FROM,
                     to: updateRecord.user.email,
                     subject: `Meeting Summary for ${updateRecord.meetingName ?? "Your Meeting"}`,
                     html: emailHtml,
                   });
                 } catch (emailError) {
-                  console.error(
-                    `Failed to send email for ${notetakerId}:`,
-                    emailError,
-                  );
+                  console.error(`Failed to send email`, emailError);
                 }
               }
             }
           } catch (bgError) {
-            console.error(`[Background Error] for ${notetakerId}:`, bgError);
+            console.error(`[Background Error]`, bgError);
           }
         })(),
       );

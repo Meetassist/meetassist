@@ -100,7 +100,7 @@ export function ConnectZoomButton({
 
   return (
     <Button
-      asChild // This tells Shadcn to merge styles into the child (Link)
+      asChild
       variant={variant}
       disabled={isLoading}
       className={`font-instrument foreground relative overflow-hidden ${styles}`}

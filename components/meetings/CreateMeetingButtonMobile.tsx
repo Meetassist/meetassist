@@ -281,22 +281,6 @@ export default function CreateMeeting({
                     </Button>
                     <Button
                       type="button"
-                      onClick={() => handlePlatformSelect("Zoom Meeting")}
-                      variant={
-                        videoCallPlatform === "Zoom Meeting"
-                          ? "default"
-                          : "ghost"
-                      }
-                      className={cn(
-                        "border-border flex-1 cursor-pointer border p-4 text-center text-xs sm:p-6 sm:text-sm",
-                        videoCallPlatform === "Zoom Meeting" && "text-white",
-                      )}
-                    >
-                      <Zoom />
-                      ZOOM
-                    </Button>
-                    <Button
-                      type="button"
                       onClick={() => handlePlatformSelect("Microsoft Teams")}
                       variant={
                         videoCallPlatform === "Microsoft Teams"
@@ -312,7 +296,23 @@ export default function CreateMeeting({
                       <span className="hidden sm:inline">Microsoft Teams</span>
                       <span className="sm:hidden">Teams</span>
                     </Button>
-
+                    <Button
+                      type="button"
+                      disabled={true}
+                      onClick={() => handlePlatformSelect("Zoom Meeting")}
+                      variant={
+                        videoCallPlatform === "Zoom Meeting"
+                          ? "default"
+                          : "ghost"
+                      }
+                      className={cn(
+                        "border-border flex-1 cursor-not-allowed border p-4 text-center text-xs sm:p-6 sm:text-sm",
+                        videoCallPlatform === "Zoom Meeting" && "text-white",
+                      )}
+                    >
+                      <Zoom />
+                      ZOOM
+                    </Button>
                     <Button
                       type="button"
                       variant="ghost"
@@ -356,6 +356,7 @@ export default function CreateMeeting({
                           styles="text-primary rounded-full border py-3"
                         />
                       )}
+                      {/* zoom is currently disable at the moment till we host meetassist on zoom market place */}
                       {connectionMessage.includes("Zoom") && (
                         <ConnectZoomButton
                           variant="ghost"

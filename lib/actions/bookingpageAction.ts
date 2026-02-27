@@ -20,10 +20,10 @@ export async function BookingPageData(
   try {
     const data = await db.eventType.findFirst({
       where: {
-        url: eventname,
         user: {
           email: originalEmail,
         },
+        url: eventname,
       },
       select: {
         id: true,

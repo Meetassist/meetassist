@@ -85,7 +85,7 @@ export const MeetingSummaryEmail = ({
               {meetingId && (
                 <Link
                   href={`${baseUrl}/dashboard/chats?id=${meetingId}`}
-                  className="mt-2 inline-block font-medium text-blue-600 no-underline"
+                  className="mt-1 inline-block font-medium text-blue-600 no-underline"
                 >
                   See full summary <span className="text-lg">→</span>
                 </Link>
@@ -109,7 +109,7 @@ export const MeetingSummaryEmail = ({
               {meetingId && (
                 <Link
                   href={`${baseUrl}/dashboard/chats?id=${meetingId}`}
-                  className="mt-3 inline-block font-medium text-blue-600 no-underline"
+                  className="mt-1 inline-block font-medium text-blue-600 no-underline"
                 >
                   See full action items <span className="text-lg">→</span>
                 </Link>

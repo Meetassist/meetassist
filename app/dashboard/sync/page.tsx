@@ -83,7 +83,7 @@ export default async function Page() {
               )}
             </CardContent>
           </Card>
-          <Card className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none">
+          {/* <Card className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none">
             <CardContent className="flex items-center justify-between">
               <div className="flex items-center gap-5">
                 <Zoom className="h-10 w-10" />
@@ -105,7 +105,7 @@ export default async function Page() {
                 />
               )}
             </CardContent>
-          </Card>
+          </Card> */}
           <Card className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none">
             <CardContent className="flex items-center justify-between">
               <div className="flex items-center gap-5">

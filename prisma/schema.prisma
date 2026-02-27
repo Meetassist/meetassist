@@ -122,12 +122,13 @@ model EventType {
   duration          Int
   maxParticipants   Int      @default(1)
   isActive          Boolean  @default(true)
-  url               String   @unique
+  url               String
   videoCallSoftware String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, url])
   @@index([url])
   @@map("event_type")
 }
@@ -143,7 +144,7 @@ model MeetingRecording {
   status         RecordingStatus @default(PENDING)
   transcriptText String?         @db.Text
   summary        String?         @db.Text
-  actionItems   String[]   @default([])
+  actionItems    String[]        @default([])
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)

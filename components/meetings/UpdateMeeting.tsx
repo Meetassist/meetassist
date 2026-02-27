@@ -268,22 +268,6 @@ export default function UpdateMeeting({
                     </Button>
                     <Button
                       type="button"
-                      onClick={() => handlePlatformSelect("Zoom Meeting")}
-                      variant={
-                        videoCallPlatform === "Zoom Meeting"
-                          ? "default"
-                          : "ghost"
-                      }
-                      className={cn(
-                        "border-border flex-1 cursor-pointer border p-4 text-center text-xs sm:p-6 sm:text-sm",
-                        videoCallPlatform === "Zoom Meeting" && "text-white",
-                      )}
-                    >
-                      <Zoom />
-                      ZOOM
-                    </Button>
-                    <Button
-                      type="button"
                       onClick={() => handlePlatformSelect("Microsoft Teams")}
                       variant={
                         videoCallPlatform === "Microsoft Teams"
@@ -298,6 +282,23 @@ export default function UpdateMeeting({
                       <MicrosoftTeams />
                       <span className="hidden sm:inline">Microsoft Teams</span>
                       <span className="sm:hidden">Teams</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      disabled={true}
+                      onClick={() => handlePlatformSelect("Zoom Meeting")}
+                      variant={
+                        videoCallPlatform === "Zoom Meeting"
+                          ? "default"
+                          : "ghost"
+                      }
+                      className={cn(
+                        "border-border flex-1 cursor-pointer border p-4 text-center text-xs sm:p-6 sm:text-sm",
+                        videoCallPlatform === "Zoom Meeting" && "text-white",
+                      )}
+                    >
+                      <Zoom />
+                      ZOOM
                     </Button>
                     <Button
                       type="button"
@@ -421,6 +422,7 @@ export default function UpdateMeeting({
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
                     setParticipants(1);
                     setValue("maxParticipants", 1);
                   }
@@ -454,6 +456,7 @@ export default function UpdateMeeting({
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
                     setParticipants(2);
                     setValue("maxParticipants", 10);
                   }
