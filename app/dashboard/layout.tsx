@@ -14,7 +14,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 const siteConfig = {
   name: "Meetassist",
-  url: "https://meetassistai.vercel.app",
+  url: "https://meetassist.cc",
   ogImage:
     "https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcDHS8PhSZhqGg0oZln3RVB2YUcPierfmHvwp4",
   description:
