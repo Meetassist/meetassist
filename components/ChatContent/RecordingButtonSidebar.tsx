@@ -50,36 +50,38 @@ export function RecordingButtonSidebar() {
           No recordings found.
         </p>
       ) : (
-        recordings.map((item) => {
-          const isActive = item.notetakerId === activeId;
-          return (
-            <div key={item.notetakerId} className="group relative">
-              <Button
-                asChild
-                variant={isActive ? "secondary" : "ghost"}
-                className={`font-instrument w-full justify-start rounded-none ${
-                  isActive ? "bg-accent text-accent-foreground" : ""
-                }`}
-              >
-                <Link
-                  href={`?id=${item.notetakerId}`}
-                  onClick={() => setOpenMobile(false)}
-                  scroll={false}
+        recordings
+          .filter((item) => item.notetakerId !== null)
+          .map((item) => {
+            const isActive = item.notetakerId === activeId;
+            return (
+              <div key={item.notetakerId} className="group relative">
+                <Button
+                  asChild
+                  variant={isActive ? "secondary" : "ghost"}
+                  className={`font-instrument w-full justify-start rounded-none ${
+                    isActive ? "bg-accent text-accent-foreground" : ""
+                  }`}
                 >
-                  <span className="truncate text-left text-base font-medium">
-                    {item.meetingName ?? "Untitled Meeting"}
-                  </span>
-                </Link>
-              </Button>
-              <div className="absolute top-1/2 right-2 mt-1 -translate-y-1/2">
-                <RecordingMenuButton
-                  notetakerId={item.notetakerId}
-                  meetingName={item.meetingName ?? "Untitled Meeting"}
-                />
+                  <Link
+                    href={`/dashboard/chats?id=${item.notetakerId}`}
+                    onClick={() => setOpenMobile(false)}
+                    scroll={false}
+                  >
+                    <span className="truncate text-left text-sm font-medium">
+                      {item.meetingName ?? "Untitled Meeting"}
+                    </span>
+                  </Link>
+                </Button>
+                <div className="absolute top-1/2 right-2 mt-1 -translate-y-1/2">
+                  <RecordingMenuButton
+                    notetakerId={item.notetakerId}
+                    meetingName={item.meetingName ?? "Untitled Meeting"}
+                  />
+                </div>
               </div>
-            </div>
-          );
-        })
+            );
+          })
       )}
     </div>
   );

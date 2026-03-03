@@ -1,10 +1,10 @@
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Instrument_Sans, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 const satoshiFont = localFont({
   src: "../public/fonts/Satoshi-Regular.otf",
   variable: "--font-satoshi",
@@ -33,15 +33,19 @@ const siteConfig = {
   description:
     "AI-powered meeting assistant that joins your online meetings, takes flawless notes, keeps everything organized, and sets smart reminders so you never miss a beat.",
   keywords: [
+    "meetassist",
+    "meetassist.cc",
     "AI meeting assistant",
     "automated meeting notes",
     "Zoom meeting recorder",
+    "calendar booking",
     "Google Meet transcription",
     "Microsoft Teams bot",
     "meeting note taker AI",
     "online meeting assistant",
     "automatic meeting minutes",
     "meeting scheduler bot",
+    "meeting scheduler",
     "virtual meeting assistant",
   ],
 };
@@ -49,7 +53,7 @@ const siteConfig = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
+    default: "Meetassist | AI Meeting Assistant - Automated Notes & Scheduling",
     template: "%s | Meetassist",
   },
 

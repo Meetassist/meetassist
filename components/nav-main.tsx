@@ -25,7 +25,7 @@ export function NavMain() {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
   return (
-    <SidebarGroup className="mt-10 px-3 md:mt-[30px]">
+    <SidebarGroup className="mt-5 px-3 md:mt-[30px]">
       <SidebarMenu className="space-y-2">
         {NAV_LINKS.map((link) => (
           <Link

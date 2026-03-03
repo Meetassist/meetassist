@@ -26,6 +26,7 @@ import { Input } from "./ui/input";
 import { Controller, useForm } from "react-hook-form";
 import { RenameMeetingSchema, TRenameMeetingSchema } from "@/utils/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSidebar } from "./ui/sidebar";
 
 type RecordingMenuButtonProps = {
   notetakerId: string | null;
@@ -40,7 +41,7 @@ export function RecordingMenuButton({
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isAlertOpenUpdate, setIsAlertOpenUpdate] = useState<boolean>(false);
-
+  const { isMobile, setOpenMobile } = useSidebar();
   const {
     control,
     handleSubmit,
@@ -64,6 +65,7 @@ export function RecordingMenuButton({
         toast.success("Recording deleted");
         setIsAlertOpen(false);
         setIsDropdownOpen(false);
+        if (isMobile) setOpenMobile(false);
       } else {
         toast.error("Failed to delete recording");
       }
@@ -78,8 +80,9 @@ export function RecordingMenuButton({
     try {
       const result = await UpdateRecordingName(data);
       if (result.success) {
-        toast.success("Name updated!");
+        toast.success("Recording name updated!");
         setIsAlertOpenUpdate(false);
+        if (isMobile) setOpenMobile(false);
       } else {
         toast.error("Failed to update!");
       }
