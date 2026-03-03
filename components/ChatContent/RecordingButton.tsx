@@ -31,7 +31,10 @@ export async function RecordingButton({
                     isActive ? "bg-accent text-accent-foreground" : ""
                   }`}
                 >
-                  <Link href={`?id=${item.notetakerId}`} scroll={false}>
+                  <Link
+                    href={`/dashboard/chats?id=${item.notetakerId}`}
+                    scroll={false}
+                  >
                     <span className="truncate text-left text-base font-medium">
                       {item.meetingName ?? "Untitled Meeting"}
                     </span>

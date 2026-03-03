@@ -153,7 +153,7 @@ function MeetingUrlForm({
                 <InputGroupButton
                   type="submit"
                   variant="secondary"
-                  className="font-inter w-[150px] cursor-pointer rounded-3xl px-3 py-5 text-xs font-normal sm:text-sm"
+                  className="font-inter w-[150px] cursor-pointer rounded-3xl py-5 text-xs font-normal sm:text-sm"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? <Spinner /> : "Record meeting"}

@@ -38,7 +38,7 @@ export async function RecordingDetails({
         </div>
       ) : (
         <div className="md:border-border w-full flex-1 pr-3 md:border-r">
-          <h2 className="font-instrument text-2xl font-medium">
+          <h2 className="font-instrument text-lg font-medium sm:text-xl md:text-2xl">
             Summary of {recordingData.meetingName ?? "Untitled meeting"}
           </h2>
           <div className="mt-4">
@@ -59,7 +59,7 @@ export async function RecordingDetails({
             </div>
             <div className="px-3 md:px-7">
               <div>
-                <p className="font-instrument text-muted-foreground mt-4 max-w-full text-justify text-base font-medium md:max-w-[700px]">
+                <p className="font-instrument text-muted-foreground mt-4 max-w-full text-base font-medium md:max-w-[700px]">
                   {recordingData.summary ?? "No summary available"}
                 </p>
               </div>
