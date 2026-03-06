@@ -2,13 +2,12 @@ export const dynamic = "force-dynamic";
 import {
   ConnectGoogleMeetButton,
   ConnectMicrosoftButton,
-  ConnectZoomButton,
 } from "@/components/ConnectButton";
 import {
   DisconnectGoogleButton,
   DisconnectMicrosoftButton,
-  DisconnectZoomButton,
 } from "@/components/DisconnectButton";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAllConnectionStatuses } from "@/utils/helper";
 import { Google, MicrosoftTeams, Zoom } from "@/utils/svgs";
@@ -41,9 +40,7 @@ export default async function Page() {
     googleConnection,
     isGoogleConnected,
     isMicrosoftConnected,
-    isZoomConnected,
     microsoftConnection,
-    zoomConnection,
   } = connectionStatuses;
   return (
     <section className="mt-10 px-4 md:px-6">
@@ -129,6 +126,28 @@ export default async function Page() {
                   styles="rounded-sm border py-5 text-white bg-primary"
                 />
               )}
+            </CardContent>
+          </Card>
+          <Card className="border-border rounded-none border-x-0 border-t-0 border-b shadow-none">
+            <CardContent className="flex items-center justify-between">
+              <div className="flex items-center gap-5">
+                <Zoom className="h-10 w-10" />
+                <div>
+                  <p className="font-instrument text-xl font-medium">Zoom</p>
+                  <p className="text-muted-foreground hidden text-sm md:block">
+                    Bring recorded video of your Zoom meetings to the platform
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative">
+                <Button
+                  disabled={true}
+                  className="rounded-sm py-5 text-white disabled:cursor-not-allowed"
+                >
+                  Connect
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
