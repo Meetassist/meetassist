@@ -28,7 +28,7 @@ const inter = Inter({
 const siteConfig = {
   name: "Meetassist",
   ogImage:
-    "https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcDHS8PhSZhqGg0oZln3RVB2YUcPierfmHvwp4",
+    "https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcSUGTtSxv7MRcGHuSX9yg61r0QbxDIZVATo4N",
   url: "https://meetassist.cc",
   description:
     "AI-powered meeting assistant that joins your online meetings, takes flawless notes, keeps everything organized, and sets smart reminders so you never miss a beat.",
