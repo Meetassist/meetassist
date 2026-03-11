@@ -63,12 +63,35 @@ export const auth = betterAuth({
     },
   },
   plugins: [lastLoginMethod({ storeInDatabase: true }), nextCookies()],
-
-  // Use databaseHooks instead of hooks
   databaseHooks: {
     user: {
       create: {
         after: async (user) => {
+          try {
+            const response = await fetch("https://api.mixpanel.com/track", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "text/plain",
+              },
+              body: JSON.stringify([
+                {
+                  event: "User Signed Up",
+                  properties: {
+                    token: process.env.MIXPANEL_TOKEN,
+                    distinct_id: user.id,
+                    time: Math.floor(Date.now() / 1000),
+                  },
+                },
+              ]),
+            });
+
+            if (!response.ok) {
+              console.error("Mixpanel tracking failed:", response.status);
+            }
+          } catch (error) {
+            console.error("Failed to track signup in Mixpanel:", error);
+          }
           try {
             await db.availability.createMany({
               data: [

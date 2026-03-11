@@ -19,6 +19,7 @@ import {
 } from "react-hook-form";
 import { toast } from "sonner";
 import { Spinner } from "./ui/spinner";
+import { trackEvent } from "@/lib/mixpanel";
 
 type MeetingUrlFormProps = {
   control: Control<TRecordingInputSchema>;
@@ -44,13 +45,24 @@ export function RecordingInput() {
   async function handleMeetingUrlSubmit(data: TRecordingInputSchema) {
     try {
       const result = await createRecording(data.meetingUrl);
-
+      if (result.success) {
+        const platform = data.meetingUrl.includes("zoom")
+          ? "zoom"
+          : data.meetingUrl.includes("teams")
+            ? "teams"
+            : data.meetingUrl.includes("meet.google")
+              ? "google_meet"
+              : "unknown";
+        trackEvent("Meeting Recording Created", {
+          platform,
+          timestamp: new Date().toISOString(),
+        });
+        toast.success("MeetAssist has been sent to your meeting!");
+      }
       if (!result.success) {
         toast.error(result.error || "Failed to create recording");
         return;
       }
-
-      toast.success("MeetAssist has been sent to your meeting!", {});
 
       reset();
     } catch (error) {

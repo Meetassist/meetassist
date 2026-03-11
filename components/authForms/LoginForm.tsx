@@ -4,6 +4,7 @@ import {
   SignInWithMicrosoft,
 } from "@/lib/actions/authentication";
 import { authClient } from "@/lib/auth-client";
+import { trackEvent } from "@/lib/mixpanel";
 import { Google, Microsoft } from "@/utils/svgs";
 import Image from "next/image";
 import { useState, useSyncExternalStore, useTransition } from "react";
@@ -11,7 +12,7 @@ import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
-
+import Link from "next/link";
 const lastLoginMethodStore = {
   subscribe: (callback: () => void) => {
     window.addEventListener("storage", callback);
@@ -45,6 +46,9 @@ export function LoginForm() {
       try {
         const result = await SignInWithGoogle();
         if (result.success && result.url) {
+          trackEvent("User Logged In", {
+            provider: "google",
+          });
           window.location.href = result.url;
           toast.success("Redirecting to Google...");
         } else {
@@ -67,6 +71,9 @@ export function LoginForm() {
         const result = await SignInWithMicrosoft();
 
         if (result.success && result.url) {
+          trackEvent("User Logged In", {
+            provider: "microsoft",
+          });
           window.location.href = result.url;
           toast.success("Redirecting to Microsoft...");
         } else {
@@ -86,7 +93,7 @@ export function LoginForm() {
   }
   return (
     <div className="flex min-h-dvh w-full flex-2 flex-col items-center justify-center px-6 pb-40 sm:px-8 md:px-10">
-      <div className="flex items-center -space-x-4 text-2xl">
+      <Link href={"/"} className="flex items-center -space-x-4 text-2xl">
         <Image
           src={"/meetassit.png"}
           alt="Meetassist Logo"
@@ -94,7 +101,7 @@ export function LoginForm() {
           height={70}
         />
         <h1 className="font-inter text-primary font-medium"> Meetassist</h1>
-      </div>
+      </Link>
       <div className="mt-4 px-5 text-center">
         <div>
           <h2 className="font-inter text-2xl font-medium">

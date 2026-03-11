@@ -1,10 +1,10 @@
-//Zoom botton is currently disable at the moment
 "use client";
 import { type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
+import { trackEvent } from "@/lib/mixpanel";
 type ButtonConnect = {
   text: string;
   styles?: string;
@@ -34,7 +34,10 @@ export function ConnectMicrosoftButton({
     >
       <Link
         href="/api/auth/microsoft"
-        onClick={() => setIsLoading(true)}
+        onClick={() => {
+          setIsLoading(true);
+          trackEvent("Connect Button Clicked", { provider: "Microsoft" });
+        }}
         className={isLoading ? "pointer-events-none" : ""}
         prefetch={false}
       >
@@ -70,7 +73,10 @@ export function ConnectGoogleMeetButton({
     >
       <Link
         href="/api/auth"
-        onClick={() => setIsLoading(true)}
+        onClick={() => {
+          setIsLoading(true);
+          trackEvent("Connect Button Clicked", { provider: "Google" });
+        }}
         className={isLoading ? "pointer-events-none" : ""}
         prefetch={false}
       >
@@ -108,7 +114,10 @@ export function ConnectZoomButton({
     >
       <Link
         href="/api/auth/zoom"
-        onClick={() => setIsLoading(true)}
+        onClick={() => {
+          setIsLoading(true);
+          trackEvent("Connect Button Clicked", { provider: "Zoom" });
+        }}
         className={isLoading ? "pointer-events-none" : ""}
         prefetch={false}
       >

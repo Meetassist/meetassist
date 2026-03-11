@@ -1,4 +1,5 @@
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import MixpanelIdentifier from "@/components/mixpanel/MixpanelIdentifier";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   SidebarInset,
@@ -146,6 +147,7 @@ export default async function RootLayout({
   }
   return (
     <>
+      <MixpanelIdentifier userId={session.user.id} />
       <SidebarProvider>
         <DashboardSidebar
           name={name}
