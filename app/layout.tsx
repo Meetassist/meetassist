@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Instrument_Sans, Inter } from "next/font/google";
 import localFont from "next/font/local";
+import MixpanelProvider from "@/components/mixpanel/MixpanelProvider";
 import "./globals.css";
 const satoshiFont = localFont({
   src: "../public/fonts/Satoshi-Regular.otf",
@@ -26,18 +27,18 @@ const inter = Inter({
 });
 
 const siteConfig = {
-  name: "Meetassist",
+  name: "meetassist",
   ogImage:
     "https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcSUGTtSxv7MRcGHuSX9yg61r0QbxDIZVATo4N",
   url: "https://meetassist.cc",
   description:
     "AI-powered meeting assistant that joins your online meetings, takes flawless notes, keeps everything organized, and sets smart reminders so you never miss a beat.",
   keywords: [
-    "meetassist",
-    "meetassist.cc",
     "AI meeting assistant",
     "automated meeting notes",
     "Zoom meeting recorder",
+    "meetassist",
+    "meetassist.cc",
     "calendar booking",
     "Google Meet transcription",
     "Microsoft Teams bot",
@@ -53,20 +54,20 @@ const siteConfig = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Meetassist | AI Meeting Assistant - Automated Notes & Scheduling",
-    template: "%s | Meetassist",
+    default: "meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
+    template: "%s | meetassist",
   },
 
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   authors: [
     {
-      name: "Meetassist Team",
+      name: "meetassist Team",
       url: siteConfig.url,
     },
   ],
-  creator: "Meetassist",
-  publisher: "Meetassist",
+  creator: "meetassist",
+  publisher: "meetassist",
   icons: {
     icon: "/icon.png",
     shortcut: "/icon.png",
@@ -78,13 +79,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteConfig.url,
     siteName: siteConfig.name,
-    title: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
+    title: "meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
     description: siteConfig.description,
     images: [
       {
         url: siteConfig.ogImage,
         width: 1200,
-        height: 630,
+        height: 628,
         alt: "Meetassist - AI-powered meeting assistant dashboard",
         type: "image/png",
       },
@@ -94,10 +95,18 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     site: "@meetassistAI",
-    creator: "@meetassist",
-    title: "Meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
+    creator: "@meetassistAI",
+    title: "meetassist - AI Meeting Assistant | Automated Notes & Scheduling",
     description: siteConfig.description,
-    images: [siteConfig.ogImage],
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 628,
+        alt: "meetassist",
+        type: "image/png",
+      },
+    ],
   },
 
   robots: {
@@ -128,7 +137,7 @@ export default function RootLayout({
       <body
         className={` ${satoshiFont.variable} ${instrumentSans.variable} ${inter.variable} font-instrument font-medium antialiased`}
       >
-        {children}
+        <MixpanelProvider>{children}</MixpanelProvider>
         <Toaster richColors position="bottom-right" />
         <Analytics />
         <SpeedInsights />

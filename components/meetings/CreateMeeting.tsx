@@ -36,6 +36,7 @@ import {
   ConnectMicrosoftButton,
   ConnectZoomButton,
 } from "../ConnectButton";
+import { trackEvent } from "@/lib/mixpanel";
 
 type VideoCallProvider =
   | "Google Meet"
@@ -125,6 +126,10 @@ export default function CreateMeeting({
     try {
       const results = await CreateEvent(data);
       if (results.success) {
+        trackEvent("Meeting Created", {
+          platform: videoCallPlatform,
+          duration: data.duration,
+        });
         toast.success("Event created");
         handleDialogClose();
         setIsOpen(false);

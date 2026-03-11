@@ -18,6 +18,7 @@ import { Input } from "../ui/input";
 import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { BookingDetail } from "./BookingDetail";
+import { trackEvent } from "@/lib/mixpanel";
 
 type BookingFormTypes = {
   eventDate: string | undefined;
@@ -156,6 +157,15 @@ export function BookingForm({
 
     const result = await CreateBooking(getValues());
     if (result.success) {
+      trackEvent("Meeting Booked", {
+        eventTypeId: getValues("eventTypeId"),
+        eventDate: getValues("eventDate"),
+        fromTime: getValues("fromTime"),
+        hasGuests: guestEmails.length > 0,
+        guestCount: guestEmails.length,
+        eventName: eventName,
+        duration: duration,
+      });
       toast.success(result.message);
       setShowDetails(true);
       reset();

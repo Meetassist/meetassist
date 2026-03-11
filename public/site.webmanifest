@@ -1,6 +1,6 @@
 {
-  "name": "Meetassist",
-  "short_name": "Meetassist",
+  "name": "meetassist",
+  "short_name": "meetassist",
   "description": "AI-powered meeting assistant that joins your online meetings, takes flawless notes, keeps everything organized, and sets smart reminders so you never miss a beat.",
   "start_url": "/",
   "display": "standalone",
