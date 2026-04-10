@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import AutoJoin from "@/components/AutoJoin";
 import { TimeAvailable } from "@/components/availability/TimeAvailable";
 import { AvailabilityLoadingSkeleton } from "@/components/SkeletonLoading";
 import { Separator } from "@/components/ui/separator";
@@ -57,6 +58,7 @@ export default function Page() {
       <Suspense fallback={<AvailabilityLoadingSkeleton />}>
         <AvailabilityContent />
       </Suspense>
+      <AutoJoin />
     </section>
   );
 }

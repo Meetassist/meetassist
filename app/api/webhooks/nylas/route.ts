@@ -13,12 +13,27 @@ type NylasMediaObject = {
 
 type NylasNotetakerObject = {
   id: string;
-  meeting_state?:
-    | "attending"
-    | "left_meeting"
-    | "error"
+  grant_id?: string;
+  meeting_link?: string;
+  meeting_provider: string;
+  calendar_id?: string;
+  event?: {
+    ical_uid?: string;
+    event_id?: string;
+    master_event_id?: string;
+  };
+  status?:
+    | "connecting"
+    | "connected"
     | "disconnected"
-    | "api_request";
+    | "failed_entry"
+    | "available";
+  state?:
+    | "scheduled"
+    | "connecting"
+    | "connected"
+    | "disconnected"
+    | "available";
   media?: NylasMediaObject;
 };
 
@@ -56,6 +71,15 @@ const EMAIL_FROM =
   process.env.EMAIL_SENDER_NAME && process.env.EMAIL_SENDER_ADDRESS
     ? `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`
     : null;
+
+const DEFAULT_MEETING_NAMES = ["Untitled Meeting", "Auto-Joined Meeting"];
+
+const PROVIDER_MAP: Record<string, string> = {
+  "Google Meet": "google_meet",
+  "Microsoft Teams": "teams",
+  Zoom: "zoom",
+};
+
 async function fetchJson(url: string | undefined, type: string) {
   if (!url) return null;
   try {
@@ -71,17 +95,33 @@ async function fetchJson(url: string | undefined, type: string) {
   }
 }
 
+async function findUserByGrant(grantId: string) {
+  return await db.user.findFirst({
+    where: {
+      OR: [
+        { googleGrantId: grantId },
+        { microsoftGrantId: grantId },
+        { zoomGrantId: grantId },
+      ],
+    },
+  });
+}
+
+function normaliseProvider(meetingProvider: string): string {
+  const mapped = PROVIDER_MAP[meetingProvider];
+  if (mapped) return mapped;
+  const normalised = meetingProvider.toLowerCase().replace(/\s+/g, "_");
+  return normalised || "unknown";
+}
 async function isValidSignature(
   req: NextRequest,
   rawBody: string,
 ): Promise<boolean> {
   const signature = req.headers.get("x-nylas-signature");
   if (!signature || !WEBHOOK_SECRET) return false;
-
   const hmac = crypto.createHmac("sha256", WEBHOOK_SECRET);
   hmac.update(rawBody);
   const digest = hmac.digest("hex");
-
   return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
 }
 
@@ -113,32 +153,110 @@ export async function POST(req: NextRequest) {
 
     const { type, data } = body;
     const notetakerId = data?.object?.id;
+    const grantId = data?.object?.grant_id;
 
     if (!notetakerId) {
       return NextResponse.json({ error: "No ID" }, { status: 400 });
     }
-
-    if (type === "notetaker.updated" || type === "notetaker.meeting_state") {
-      const state = data.object.meeting_state;
-      const statusMap: Record<string, RecordingStatus> = {
-        attending: RecordingStatus.RECORDING,
-        left_meeting: RecordingStatus.PROCESSING,
-        disconnected: RecordingStatus.PROCESSING,
-        error: RecordingStatus.FAILED,
-        api_request: RecordingStatus.PROCESSING,
-      };
-
-      if (state && statusMap[state]) {
-        await db.meetingRecording.update({
-          where: { notetakerId },
-          data: { status: statusMap[state] },
-        });
+    if (type === "notetaker.created") {
+      if (grantId) {
+        const user = await findUserByGrant(grantId);
+        if (user) {
+          await db.meetingRecording.upsert({
+            where: { notetakerId },
+            update: {},
+            create: {
+              userId: user.id,
+              notetakerId,
+              grantId,
+              meetingName: "Auto-Joined Meeting",
+              meetingUrl: data.object.meeting_link || "",
+              provider: normaliseProvider(data.object.meeting_provider),
+              status: RecordingStatus.PENDING,
+            },
+          });
+        } else {
+          console.error(
+            `[notetaker.created] No user found for grant ${grantId}`,
+          );
+        }
       }
+
       return NextResponse.json({ status: "ok" });
     }
 
+    if (type !== "notetaker.media") {
+      const existing = await db.meetingRecording.findUnique({
+        where: { notetakerId },
+      });
+
+      if (!existing) {
+        console.warn(
+          `[webhook] No record found for notetaker ${notetakerId} on event "${type}". ` +
+            `notetaker.created may not have been delivered.`,
+        );
+        return NextResponse.json({ status: "ok" });
+      }
+    }
+
+    if (type === "notetaker.updated" || type === "notetaker.meeting_state") {
+      const status = data.object.status;
+
+      const statusMap: Record<string, RecordingStatus> = {
+        connecting: RecordingStatus.RECORDING,
+        connected: RecordingStatus.RECORDING,
+        disconnected: RecordingStatus.PROCESSING,
+        available: RecordingStatus.PROCESSING,
+        failed_entry: RecordingStatus.FAILED,
+      };
+
+      if (status && statusMap[status]) {
+        await db.meetingRecording.update({
+          where: { notetakerId },
+          data: { status: statusMap[status] },
+        });
+      }
+
+      return NextResponse.json({ status: "ok" });
+    }
     if (type === "notetaker.media") {
-      const media = data.object.media;
+      const { state, media } = data.object;
+      if (state !== "available") {
+        return NextResponse.json({ status: "ok" });
+      }
+      let existing = await db.meetingRecording.findUnique({
+        where: { notetakerId },
+      });
+
+      if (!existing && grantId) {
+        const user = await findUserByGrant(grantId);
+        if (user) {
+          existing = await db.meetingRecording.upsert({
+            where: { notetakerId },
+            update: {},
+            create: {
+              userId: user.id,
+              notetakerId,
+              grantId,
+              meetingName: "Auto-Joined Meeting",
+              meetingUrl: data.object.meeting_link || "",
+              provider: normaliseProvider(data.object.meeting_provider),
+              status: RecordingStatus.PENDING,
+            },
+          });
+        } else {
+          console.error(
+            `[notetaker.media] No user found for grant ${grantId} — cannot process media`,
+          );
+          return NextResponse.json({ status: "ok" });
+        }
+      }
+      if (!existing) {
+        console.error(
+          `[notetaker.media] No record and no grantId — cannot process media for ${notetakerId}`,
+        );
+        return NextResponse.json({ status: "ok" });
+      }
 
       waitUntil(
         (async () => {
@@ -151,7 +269,6 @@ export async function POST(req: NextRequest) {
 
             const updateData: MeetingRecordingUpdate = {};
 
-            // Parse Transcript
             if (rawTranscript) {
               if (
                 rawTranscript.type === "speaker_labelled" &&
@@ -181,6 +298,7 @@ export async function POST(req: NextRequest) {
               const summaryContent =
                 rawSummary?.summary ||
                 (typeof rawSummary === "string" ? rawSummary : null);
+
               if (summaryContent && summaryContent.trim()) {
                 updateData.summary = summaryContent;
                 updateData.status = RecordingStatus.COMPLETED;
@@ -196,19 +314,13 @@ export async function POST(req: NextRequest) {
                 });
 
                 if (
-                  current?.meetingName === "Untitled Meeting" ||
-                  !current?.meetingName
+                  !current?.meetingName ||
+                  DEFAULT_MEETING_NAMES.includes(current.meetingName)
                 ) {
                   const aiTitle = await generateMeetingName(
                     summaryContent.trim(),
                   );
                   if (aiTitle) updateData.meetingName = aiTitle;
-                } else {
-                  console.error(
-                    "Unexpected summary format from Nylas:",
-                    typeof rawSummary,
-                    rawSummary,
-                  );
                 }
               }
             }
@@ -228,7 +340,7 @@ export async function POST(req: NextRequest) {
                       meetingTitle: updateRecord.meetingName || "Your Meeting",
                       dateSent: formattedDate,
                       summary: truncateWords(updateRecord.summary || "", 150),
-                      baseUrl: baseUrl,
+                      baseUrl,
                       actionItems:
                         (updateRecord.actionItems as string[])?.slice(0, 3) ||
                         [],
@@ -236,11 +348,13 @@ export async function POST(req: NextRequest) {
                       image: `https://q212epyvwe.ufs.sh/f/W9qsvzaZwWtcJBGBgyn3kOTCG0vYAsNHbhWcmozPJ8Vit4qw`,
                     }),
                   );
+
                   if (!EMAIL_FROM) {
                     throw new Error(
                       "EMAIL_SENDER_NAME or EMAIL_SENDER_ADDRESS is not configured",
                     );
                   }
+
                   await resend.emails.send({
                     from: EMAIL_FROM,
                     to: updateRecord.user.email,
@@ -248,7 +362,7 @@ export async function POST(req: NextRequest) {
                     html: emailHtml,
                   });
                 } catch (emailError) {
-                  console.error(`Failed to send email`, emailError);
+                  console.error(`Failed to send email:`, emailError);
                 }
               }
             }

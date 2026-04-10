@@ -108,7 +108,6 @@ async function Meeting() {
     );
   }
 
-  // Fetch from Microsoft if connected
   if (
     hasMicrosoftConnected &&
     userData.microsoftGrantId &&
@@ -147,7 +146,7 @@ async function Meeting() {
   const upcomingMeetings = allEvents
     .filter((meeting) => {
       if (!meeting.when || typeof meeting.when !== "object") return false;
-      return meeting.when.startTime >= now;
+      return meeting.when.endTime >= now;
     })
     .sort((a, b) => a.when.startTime - b.when.startTime)
     .slice(0, 10);
