@@ -1,3 +1,4 @@
+import { enableAutoJoin } from "@/lib/actions/autoJoinAction";
 import { getUserSession } from "@/lib/getSession";
 import { nylas, nylasConfig } from "@/lib/nylas";
 import db from "@/lib/prisma";
@@ -60,8 +61,22 @@ export async function GET(req: NextRequest) {
         googleEmail: email,
       },
     });
+    try {
+      const autoJoinResult = await enableAutoJoin(
+        session.user.id,
+        session.user.name ?? "",
+        grantId,
+        email,
+      );
+      if (!autoJoinResult.success) {
+        console.error("Auto-join setup failed:", autoJoinResult.error);
+      } else {
+        console.log("Auto-join configured for user:", session.user.id);
+      }
+    } catch (autoJoinError) {
+      console.error("Auto-join threw an exception:", autoJoinError);
+    }
 
-    console.log("OAuth successful for user:", session?.user?.id);
     redirect("/dashboard/sync");
   } catch (error) {
     cookieStore.delete("oauth_state");

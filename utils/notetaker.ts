@@ -1,4 +1,3 @@
-import { RecordingStatus } from "@/lib/generated/prisma/enums";
 import { MeetingProvider } from "@/utils/types";
 
 export function detectMeetingProvider(url: string): MeetingProvider | null {
@@ -108,16 +107,9 @@ export function sanitizeNotetakerName(name?: string): string {
     return "MeetAssist Notetaker";
   }
 
-  // Take first name only if full name provided
   const firstName = name.trim().split(" ")[0];
 
   return `MeetAssist (${firstName}'s meeting assistant)`;
-}
-
-export function isTerminalStatus(status: RecordingStatus): boolean {
-  return (
-    status === "COMPLETED" || status === "FAILED" || status === "CANCELLED"
-  );
 }
 
 export function validateNotetakerEnvironment(): {
@@ -135,14 +127,5 @@ export function validateNotetakerEnvironment(): {
   if (!process.env.NEXT_PUBLIC_URL) {
     return { valid: false, error: "NEXT_PUBLIC_URL not configured" };
   }
-
-  //   const appUrl = process.env.NEXT_PUBLIC_URL;
-  //   if (appUrl.includes("localhost") || appUrl.includes("127.0.0.1")) {
-  //     console.warn(
-  //       " WARNING: Using localhost URL - webhooks will not work in production!",
-  //     );
-  //     console.warn("   Use ngrok or deploy to a public URL for webhook support");
-  //   }
-
   return { valid: true };
 }

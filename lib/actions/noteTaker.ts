@@ -11,7 +11,7 @@ import { getUserSession } from "../getSession";
 import { nylas } from "../nylas";
 import db from "../prisma";
 
-interface NotetakerCreateRequest {
+type NotetakerCreateRequest = {
   meetingLink: string;
   name: string;
   meetingSettings: {
@@ -27,13 +27,14 @@ interface NotetakerCreateRequest {
       customInstructions?: string;
     };
   };
-}
+};
 
-interface ActionResult<T = unknown> {
+type ActionResult<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string;
-}
+  message?: string;
+};
 
 export async function createRecording(
   meetingUrl: string,
